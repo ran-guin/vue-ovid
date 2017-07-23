@@ -8,7 +8,7 @@
     div(v-if="!patient || !patient.id")
       Search(scope='user', url='http://localhost:3002/lookup/search', prompt='Find Patient')
       hr
-      SearchResults(scope='user')
+      SearchResults(scope='user' noDataMsg='no patient')
       hr
       button(@click.prevent="test") Test 
       button(@click.prevent="test2") ++    
@@ -38,21 +38,10 @@ export default {
   computed: mapState([
     'patient',
     'selected',
-    'searchResults'
+    'searchResults',
+    'searchStatus'
   ]),
   methods: {
-    test () {
-      this.$store.commit('increment')
-    },
-    test2 () {
-      this.$store.commit('increment')
-    },
-    searchMe (evt) {
-      console.log('search for ' + this.searchstring)
-      console.log(JSON.stringify(evt))
-      this.myName = 'ex'
-      this.$store.commit('searchUsers', document.getElementById('user').value)
-    },
     clearUser () {
       this.$store.commit('clearUser')
     }

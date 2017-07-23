@@ -1,40 +1,36 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import underscore from 'underscore'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+// import StdState from './../Standard/StdState'
+// const ovid = {
 
+export default new Vuex.Store({
   state: {
     count: 1,
     patient: {id: null, name: null},
     vaccine: {id: null, name: null},
     disease: {id: null, name: null},
     scheduled: [],
+
     selected: [1, 2, 3],
     foundRecords: {},
-    searchResults: { patient: [], vaccine: [] }
+    searchResults: { patient: [], vaccine: [] },
+    picked: { patient: [], vaccine: [] },
+    searchStatus: { patient: '', vaccine: '' },
+    errors: []
   },
   mutations: {
     increment (state) {
       state.count++
       state.count++
     },
-    searchUsers (state, string) {
-      console.log('found user... ' + string)
-      state.patient.id = 4
-      state.patient.name = 'Ran'
-      state.selected.push({model: 'patient', id: 4})
-    },
     clearUser (state) {
       console.log('clear ' + state.patient.name)
       state.patient.id = null
       state.patient.name = null
-    },
-    found_patients (state, data) {
-      if (!data) { data = {} }
-      console.log('get patient search results')
-      state.searchResults.patient = data
     },
     stashResults (state, results) {
       if (results.constructor === Object && results.scope) {
@@ -47,15 +43,61 @@ export default new Vuex.Store({
         state.foundRecords.data = results.length
       }
     },
-    found (state, count) {
-      console.log('found ' + count + ' records')
-      state.foundRecords = count
+
+    selectOne (state, data) {
+      if (data.scope && data.id) {
+        state.picked[data.scope] = data.id
+      }
     },
-    searchVaccines (state, string) {
-      console.log('found vaccine(s)/disease(s): ' + string)
-      state.vaccine.id = 3
-      state.vaccine.name = 'MMR'
+    unselectOne (state, data) {
+      if (data.scope && data.id && state.picked[data.scope] && state.picked[data.scope].length) {
+        const found = underscore.pluck(state.picked[data.scope], 'id').indexOf(data.id)
+        state.picked[data.scope].splice(found, 1)
+        console.log('found ' + found)
+        console.log(JSON.stringify(state.picked[data.scope]))
+      } else {
+        console.log('not selected')
+      }
+    },
+    selectOneMore (state, data) {
+      if (data.scope && data.id) {
+        if (state.picked[data.scope].length && underscore.pluck(state.picked[data.scope], 'id').indexOf(data.id) > -1) {
+          console.log('already picked ' + data.id)
+        } else {
+          state.picked[data.scope].push({id: data.id, label: data.label})
+        }
+      }
+    },
+
+    clearSearchResults (state, data) {
+      console.log('clear search results for ' + data.scope)
+      state.searchResults[data.scope] = []
+    },
+    setSearchStatus (state, data) {
+      console.log('set search status: ' + JSON.stringify(data))
+      state.searchStatus[data.scope] = data.status
+    },
+    setError (state, err) {
+      console.log('set Error: ' + err)
+      if (err.constructor === Error && err.message) {
+        state.errors.push(err.message)
+      } else if (err.constructor === String) {
+        state.errors.push(err)
+      }
+    },
+    clearErrors (state, err) {
+      console.log('clear errors...')
+      state.errors = []
     }
   }
+
 })
+// }
+
+// export default new Vuex.Store({
+//   modules: {
+//     ovid: ovid,
+//     std: StdState
+//   }
+// })
 

@@ -2,7 +2,9 @@
   div.schedule-section
     Search(:id='vaccineString' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search for Disease of Vaccine')
     hr
-    SearchResults(scope='vaccine')
+    Picked(scope='vaccine')
+    hr
+    SearchResults(scope='vaccine' reference='gtin')
 
 </template>
 
@@ -11,6 +13,7 @@
 import { mapState } from 'vuex'
 import Search from './../Standard/Search.vue'
 import SearchResults from './../Standard/SearchResults.vue'
+import Picked from './../Standard/Picked.vue'
 
 export default {
   name: 'schedule',
@@ -22,20 +25,17 @@ export default {
   },
   components: {
     Search,
-    SearchResults
+    SearchResults,
+    Picked
   },
   computed: mapState([
     'patient',
     'selected',
     'searchResults',
+    'searchStatus',
     'count'
   ]),
   methods: {
-    searchVaccines (evt) {
-      console.log('search vaccines for ' + this.searchstring)
-      console.log(JSON.stringify(evt))
-      this.$store.commit('searchVaccines', document.getElementById('vaccineString').value)
-    }
   }
 }
 </script>

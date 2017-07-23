@@ -2,6 +2,7 @@
   div.visit-section
     
     b show me again:
+    Messaging
     patient(name = "Jed")
     div.scheduled-section  
       h1 Scheduled: 
@@ -14,16 +15,18 @@
         b Schedule user_id = {{selectOne.subject.id}}
 </template>
 
-<script>
 
+<script>
 import Patient from './Patient.vue'
 import Schedule from './Schedule.vue'
+import Messaging from './../Standard/Messaging.vue'
 
 export default {
   name: 'user',
   components: {
     Patient,
-    Schedule
+    Schedule,
+    Messaging
   },
   data () {
     return {
@@ -39,7 +42,6 @@ export default {
       alt_msg: 'Another message'
     }
   },
-
   events: {
     'incremented': function () {
       console.log('caught in visit')
