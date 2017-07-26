@@ -6,12 +6,11 @@
       button(@click.prevent="clearUser") New Patient
       button(@click.prevent="test") Test
     div(v-if="!patient || !patient.id")
-      Search(scope='user', url='http://localhost:3002/lookup/search', prompt='Find Patient')
+      Search(scope='patient', model='user' url='http://localhost:1234/Record_API/search', :search="search", prompt='Find Patient')
       hr
-      SearchResults(scope='user' noDataMsg='no patient')
+      Picked(scope='patient')
       hr
-      button(@click.prevent="test") Test 
-      button(@click.prevent="test2") ++    
+      SearchResults(scope='patient' reference='name' noDataMsg='no patient')
 </template>
 
 <script>
@@ -19,12 +18,14 @@
 import { mapState } from 'vuex'
 import Search from './../Standard/Search.vue'
 import SearchResults from './../Standard/SearchResults.vue'
+import Picked from './../Standard/Picked.vue'
 
 export default {
   name: 'patient',
   components: {
     Search,
-    SearchResults
+    SearchResults,
+    Picked
   },
   data () {
     return {
@@ -32,7 +33,7 @@ export default {
       searchstring: '',
       title: 'Patient Dashboard',
       menu: {options: ['user', 'search', 'history', 'scheduled'], selected: 'user'},
-      search: {table: 'user', fields: ['name', 'email']}
+      search: {'user': ['name', 'email']}
     }
   },
   computed: mapState([
