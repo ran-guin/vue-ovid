@@ -1,7 +1,7 @@
 <template lang='pug'>
   div.visit-section
-    
-    b show me again:
+    img(src="./assets/needleIcon.png")
+
     Messaging
     patient(name = "Jed")
     div.scheduled-section  
