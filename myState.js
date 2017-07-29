@@ -20,7 +20,8 @@ export default new Vuex.Store({
     searchResults: { patient: [], vaccine: [] },
     picked: { patient: [], vaccine: [] },
     searchStatus: { patient: '', vaccine: '' },
-    errors: []
+    errors: {},
+    errorCount: 0
   },
   mutations: {
     increment (state) {
@@ -74,20 +75,39 @@ export default new Vuex.Store({
       state.searchResults[data.scope] = []
     },
     setSearchStatus (state, data) {
-      console.log('set search status: ' + JSON.stringify(data))
       state.searchStatus[data.scope] = data.status
+      console.log('set search status: ' + JSON.stringify(data))
     },
-    setError (state, err) {
-      console.log('set Error: ' + err)
-      if (err.constructor === Error && err.message) {
-        state.errors.push(err.message)
-      } else if (err.constructor === String) {
-        state.errors.push(err)
+    setError (state, data) {
+      console.log('Error ' + data.context)
+      console.log('set Error: ' + data.err)
+
+      if (data.err && data.context) {
+        if (!state.errors[data.context]) {
+          state.errors[data.context] = []
+          console.log('initialized...' + data.context)
+        }
+
+        if (data.err.constructor === Error && data.err.message) {
+          state.errors[data.context].push(data.err.message)
+          console.log('added ' + data.err.message)
+          console.log(JSON.stringify(state.errors))
+        } else if (data.err && data.err.constructor === String) {
+          state.errors[data.context].push(data.err)
+          console.log('Added ' + data.err.message)
+        }
       }
+      state.errorCount++
     },
-    clearErrors (state, err) {
+    clearErrors (state, scope) {
       console.log('clear errors...')
-      state.errors = []
+      if (scope) {
+        state.errors[scope] = []
+      } else {
+        state.errors = {}
+      }
+
+      state.errorCount = 0
     }
   }
 
