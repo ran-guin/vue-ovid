@@ -15,36 +15,35 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
+  import Search from './../Standard/Search.vue'
+  import SearchResults from './../Standard/SearchResults.vue'
 
-import { mapState } from 'vuex'
-import Search from './../Standard/Search.vue'
-import SearchResults from './../Standard/SearchResults.vue'
-
-export default {
-  name: 'patient',
-  components: {
-    Search,
-    SearchResults
-  },
-  data () {
-    return {
-      myName: 'noah',
-      searchstring: '',
-      title: 'Patient Dashboard',
-      menu: {options: ['user', 'search', 'history', 'scheduled'], selected: 'user'},
-      search: {table: 'user', fields: ['name', 'email']}
-    }
-  },
-  computed: mapState([
-    'patient',
-    'selected',
-    'searchResults',
-    'searchStatus'
-  ]),
-  methods: {
-    clearUser () {
-      this.$store.commit('clearUser')
+  export default {
+    name: 'patient',
+    components: {
+      Search,
+      SearchResults
+    },
+    data () {
+      return {
+        myName: 'noah',
+        searchstring: '',
+        title: 'Patient Dashboard',
+        menu: {options: ['user', 'search', 'history', 'scheduled'], selected: 'user'},
+        search: {table: 'user', fields: ['name', 'email']}
+      }
+    },
+    computed: mapState([
+      'patient',
+      'selected',
+      'searchResults',
+      'searchStatus'
+    ]),
+    methods: {
+      clearUser () {
+        this.$store.commit('clearUser')
+      }
     }
   }
-}
 </script>
