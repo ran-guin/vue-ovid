@@ -13,6 +13,8 @@
         b ... other page...
       div
         b Schedule user_id = {{selectOne.subject.id}}
+      h3 Immunize:
+      Immunize
 </template>
 
 
@@ -20,13 +22,15 @@
 import Patient from './Patient.vue'
 import Schedule from './Schedule.vue'
 import Messaging from './../Standard/Messaging.vue'
+import Immunize from './Immunize.vue'
 
 export default {
   name: 'user',
   components: {
     Patient,
     Schedule,
-    Messaging
+    Messaging,
+    Immunize
   },
   data () {
     return {
@@ -57,6 +61,10 @@ export default {
 </script>
 
 <style scoped>
+  .body {
+    height: auto;
+  }
+  
   .user-section, .scheduled-section {
     width: 80%;
     margin-left: 10%;
