@@ -17,7 +17,6 @@
       Immunize
 </template>
 
-
 <script>
 import Patient from './Patient.vue'
 import Schedule from './Schedule.vue'
