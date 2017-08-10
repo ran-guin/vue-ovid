@@ -6,7 +6,7 @@
       button(@click.prevent="clearUser") New Patient
       button(@click.prevent="test") Test
     div(v-if="!patient || !patient.id")
-      Search(scope='patient', model='user' url='http://localhost:1234/Record_API/search', :search="search", prompt='Find Patient')
+      Search(scope='patient', model='user' url='http://localhost:1234/Record_API/search?table=user', :search="search", prompt='Find Patient')
       hr
       Picked(scope='patient')
       hr
