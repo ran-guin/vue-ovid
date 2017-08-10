@@ -20,7 +20,8 @@ export default new Vuex.Store({
     searchResults: { patient: [], vaccine: [] },
     picked: { patient: [], vaccine: [] },
     searchStatus: { patient: '', vaccine: '' },
-    errors: []
+    errors: [],
+    logs: []
   },
   mutations: {
     increment (state) {
@@ -88,6 +89,10 @@ export default new Vuex.Store({
     clearErrors (state, err) {
       console.log('clear errors...')
       state.errors = []
+    },
+    log (state, data) {
+      console.log('log message')
+      state.logs.push(data)
     }
   }
 
