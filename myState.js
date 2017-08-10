@@ -24,7 +24,7 @@ export default new Vuex.Store({
     errorCount: 0,
     formTable: '',
     formFields: [],
-    formStatus: 'pending'
+    formStatus: 'pending',
     logs: []
   },
   mutations: {
