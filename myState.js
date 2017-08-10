@@ -21,7 +21,10 @@ export default new Vuex.Store({
     picked: { patient: [], vaccine: [] },
     searchStatus: { patient: '', vaccine: '' },
     errors: {},
-    errorCount: 0
+    errorCount: 0,
+    formTable: '',
+    formFields: [],
+    formStatus: 'pending'
   },
   mutations: {
     increment (state) {
@@ -108,6 +111,16 @@ export default new Vuex.Store({
       }
 
       state.errorCount = 0
+    },
+    loadFields (state, data) {
+      state.formTable = data.table
+      state.formFields = data.fields
+      state.formStatus = 'loaded'
+    },
+    clearFields (state, data) {
+      state.formTable = ''
+      state.formFields = []
+      state.formStatus = 'pending'
     }
   }
 
