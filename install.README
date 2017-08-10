@@ -1,0 +1,27 @@
+## instructions for installing standard projects into Vue boilerplate from scratch ##
+
+# (requires global npm install of vue)
+
+> vue init webpack myproject
+
+> cd myproject
+
+> npm install
+
+> npm install -S vuex axios cors bootstrap bootstrap-vue
+
+> npm install -D pug
+
+> cd src/components
+
+> git clone https://github.com/ran-guin/vue-standard-components Standard
+
+> git clone https://github.com/ran-guin/custom-project-url myprojectname
+
+> cd ..
+
+> cp -R components/Standard/setup/ ./
+> cp -R components/myprojectname/setup/ ./
+
+
+

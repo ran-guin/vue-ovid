@@ -9,35 +9,34 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
+  import Search from './../Standard/Search.vue'
+  import SearchResults from './../Standard/SearchResults.vue'
+  import Picked from './../Standard/Picked.vue'
 
-import { mapState } from 'vuex'
-import Search from './../Standard/Search.vue'
-import SearchResults from './../Standard/SearchResults.vue'
-import Picked from './../Standard/Picked.vue'
-
-export default {
-  name: 'schedule',
-  data () {
-    return {
-      msg: 'schedule message',
-      vaccineString: ''
+  export default {
+    name: 'schedule',
+    data () {
+      return {
+        msg: 'schedule message',
+        vaccineString: ''
+      }
+    },
+    components: {
+      Search,
+      SearchResults,
+      Picked
+    },
+    computed: mapState([
+      'patient',
+      'selected',
+      'searchResults',
+      'searchStatus',
+      'count'
+    ]),
+    methods: {
     }
-  },
-  components: {
-    Search,
-    SearchResults,
-    Picked
-  },
-  computed: mapState([
-    'patient',
-    'selected',
-    'searchResults',
-    'searchStatus',
-    'count'
-  ]),
-  methods: {
   }
-}
 </script>
 
 <style scoped>

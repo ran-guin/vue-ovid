@@ -1,6 +1,6 @@
 <template lang='pug'>
   div.visit-section
-    img(src="./assets/needleIcon.png")
+    img(src="./assets/logo.png")
 
     Messaging
     patient(name = "Jed")

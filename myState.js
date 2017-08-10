@@ -25,6 +25,7 @@ export default new Vuex.Store({
     formTable: '',
     formFields: [],
     formStatus: 'pending'
+    logs: []
   },
   mutations: {
     increment (state) {
@@ -121,6 +122,10 @@ export default new Vuex.Store({
       state.formTable = ''
       state.formFields = []
       state.formStatus = 'pending'
+    },
+    log (state, data) {
+      console.log('log message')
+      state.logs.push(data)
     }
   }
 
