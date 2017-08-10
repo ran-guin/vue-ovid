@@ -9,7 +9,6 @@ new Vue({
   components: { App }
 })
 
-
 import Vue from 'vue'
 import App from './App'
 import router from './router'
@@ -37,6 +36,6 @@ new Vue({
     test_log () {
       console.log('test log')
       store.commit('log', { message: 'test log' })
-    },
+    }
   }
 })
