@@ -10,9 +10,9 @@
       hr 
       Schedule(:scheduled="scheduled")
       
-      div(v-if="selected === 'dashboard'")
+      div(v-if="page === 'dashboard'")
         b Dashboard
-      div(v-if="!selected === 'dashboard'")
+      div(v-if="!page === 'dashboard'")
         b ... other page...
       div
         b Schedule user_id = {{selectOne.subject.id}}
@@ -45,19 +45,16 @@ export default {
   },
   data () {
     return {
-      selected: 'dashboard',
-      subject: { id: 0, name: 'tbd', details: {} },
-      scheduled: { vaccine: '' },
-      focus: { context: '', id: '' },
-      menu: {options: ['dashboard', 'history', 'scheduled'], selected: 'dashboard'},
+      menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
-      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-
-      name: 'tbd',
-      alt_msg: 'Another message'
+      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' }
     }
   },
   props: {
+    page: {
+      type: String,
+      default: 'dashboard'
+    },
     patient: {
       type: Object,
       default () { return {} }
@@ -87,6 +84,7 @@ export default {
 
   methods: {
     find_user () {
+      console.log('find me')
       this.msg = 'revised message '
     }
   }
