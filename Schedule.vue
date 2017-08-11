@@ -1,6 +1,8 @@
 <template lang='pug'>
   div.schedule-section
-    Search(:id='vaccineString' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccine' :multiSelect="false")
+    h3 Schedule section
+    Search(:id='vaccineString' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccine' :multiSelect="false" :addAction="Immunize")
+    b Imm =  isa {{ Immunize.Immunize.constructor }}
 </template>
 
 <script>
@@ -11,7 +13,8 @@
     data () {
       return {
         msg: 'schedule message',
-        vaccineString: ''
+        vaccineString: '',
+        Immunize: { 'Immunize': this.ImmunizePatient }
       }
     },
     props: {
@@ -24,6 +27,9 @@
       Search
     },
     methods: {
+      ImmunizePatient: function (index) {
+        console.log('Immunize Me ' + index)
+      }
     }
   }
 </script>
