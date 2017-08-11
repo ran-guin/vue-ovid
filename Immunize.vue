@@ -6,15 +6,10 @@
   div
     button(id="show-modal" @click="showModal = true") Load Table
     dbRecordModal(v-if="showModal" table='user' type='append' @close="showModal=false")
-    	h3 custom Header
-    hr
-    FormA(table='Equipment' type='append' prompt='Save Immunization Record')
-    hr
-    h3 Form Generator Below...
+
 </template>
 
 <script>
-import FormA from './../Standard/Form.vue'
 import dbRecordModal from './../Standard/dbRecordModal.vue'
 
 export default {
@@ -26,7 +21,6 @@ export default {
     }
   },
   components: {
-    FormA,
     dbRecordModal
   },
 
