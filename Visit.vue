@@ -1,11 +1,9 @@
 <template lang='pug'>
   div.visit-section
-    img(src="./assets/logo.png")
-
-    Messaging
-    patient(name = "Jed")
     div.scheduled-section  
-      h1 Scheduled: 
+      h3 Patient
+      User
+      hr 
       Schedule
       div(v-if="selected === 'dashboard'")
         b Dashboard
@@ -18,15 +16,15 @@
 </template>
 
 <script>
-import Patient from './Patient.vue'
+import User from './../User.vue'
 import Schedule from './Schedule.vue'
 import Messaging from './../Standard/Messaging.vue'
 import Immunize from './Immunize.vue'
 
 export default {
-  name: 'user',
+  name: 'ovid',
   components: {
-    Patient,
+    User,
     Schedule,
     Messaging,
     Immunize
@@ -38,7 +36,7 @@ export default {
       scheduled: { vaccine: '' },
       focus: { context: '', id: '' },
       menu: {options: ['dashboard', 'history', 'scheduled'], selected: 'dashboard'},
-      search: {table: 'vaccine', fields: ['name']},
+      search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
 
       name: 'tbd',
