@@ -2,7 +2,6 @@
   div.schedule-section
     h3 Schedule section
     Search(:id='vaccineString' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccine' :multiSelect="false" :addAction="Immunize")
-    b Imm =  isa {{ Immunize.Immunize.constructor }}
 </template>
 
 <script>
@@ -27,8 +26,9 @@
       Search
     },
     methods: {
-      ImmunizePatient: function (index) {
-        console.log('Immunize Me ' + index)
+      ImmunizePatient: function (data) {
+        console.log('Immunize Me With ')
+        console.log(JSON.stringify(data))
       }
     }
   }
