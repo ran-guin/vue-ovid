@@ -5,7 +5,7 @@ import Main from '@/components/Main'
 
 import User from '@/components/User'
 
-import Visit from '@/components/OVID/Visit'
+import Visit from '@/components/ovid/Visit'
 
 import Login from '@/components/Standard/Login'
 
