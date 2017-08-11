@@ -1,33 +1,47 @@
 <template lang='pug'>
   div.visit-section
-    div.scheduled-section  
-      h3 Patient
-      User
+    div.scheduled-section
+      div.col-md-6  
+        h3 Patient
+        User(role='patient' :user="patient")
+      div.col-md-6
+        h3 Staff
+        User(role='staff' :user="staff")
       hr 
-      Schedule
+      Schedule(:scheduled="scheduled")
+      
       div(v-if="selected === 'dashboard'")
         b Dashboard
       div(v-if="!selected === 'dashboard'")
         b ... other page...
       div
         b Schedule user_id = {{selectOne.subject.id}}
+      
+      hr
       h3 Immunize:
       Immunize
+
+      hr
+      h4 History:
+      DataGrid(:data="history")
+
 </template>
 
 <script>
 import User from './../User.vue'
 import Schedule from './Schedule.vue'
-import Messaging from './../Standard/Messaging.vue'
+// import Messaging from './../Standard/Messaging.vue'
 import Immunize from './Immunize.vue'
+import DataGrid from './../Standard/DataGrid.vue'
 
 export default {
   name: 'ovid',
   components: {
     User,
     Schedule,
-    Messaging,
-    Immunize
+    // Messaging,
+    Immunize,
+    DataGrid
   },
   data () {
     return {
@@ -41,6 +55,28 @@ export default {
 
       name: 'tbd',
       alt_msg: 'Another message'
+    }
+  },
+  props: {
+    patient: {
+      type: Object,
+      default () { return {} }
+    },
+    staff: {
+      type: Object,
+      default () { return {} }
+    },
+    scheduled: {
+      type: Array,
+      default () { return [] }
+    },
+    treated: {
+      type: Array,
+      default () { return [] }
+    },
+    history: {
+      type: Array,
+      default () { return [ {'applied': 'n/a', 'vaccine': 'n/a', 'disease': 'n/a', notes: 'nothing found'} ] }
     }
   },
   events: {
