@@ -1,25 +1,7 @@
 <template lang='pug'>
-  div.visit-section
-    div.scheduled-section
-      div.col-md-6  
-        h3 Patient
-        User(role='patient' :user="patient")
-      div.col-md-6
-        h3 Staff
-        User(role='staff' :user="staff")
-      hr 
+  div
+    div.scheduled-section 
       Schedule(:scheduled="scheduled")
-      
-      div(v-if="page === 'dashboard'")
-        b Dashboard
-      div(v-if="!page === 'dashboard'")
-        b ... other page...
-      div
-        b Schedule user_id = {{selectOne.subject.id}}
-      
-      hr
-      h3 Immunize:
-      Immunize
 
       hr
       h4 History:
