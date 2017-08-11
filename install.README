@@ -8,7 +8,7 @@
 
 > npm install
 
-> npm install -S vuex axios cors bootstrap bootstrap-vue
+> npm install -S vuex axios cors bootstrap bootstrap-vue vue-form-generator
 
 > npm install -D pug
 
