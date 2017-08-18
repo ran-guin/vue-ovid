@@ -1,6 +1,7 @@
 <template lang='pug'>
   div.schedule-section
-    Search(:id='vaccineString' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addAction="Immunize")
+    Search(:id='vaccineString' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addAction="Immunize" modalButton="Save Immunization Record")
+
 </template>
 
 <script>
