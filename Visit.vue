@@ -1,5 +1,6 @@
 <template lang='pug'>
   div
+    Messaging
     div.scheduled-section 
       Schedule(:scheduled="scheduled")
 
@@ -12,16 +13,16 @@
 <script>
 import User from './../User.vue'
 import Schedule from './Schedule.vue'
-// import Messaging from './../Standard/Messaging.vue'
 import Immunize from './Immunize.vue'
 import DataGrid from './../Standard/DataGrid.vue'
+import Messaging from './../Standard/Messaging.vue'
 
 export default {
   name: 'ovid',
   components: {
     User,
     Schedule,
-    // Messaging,
+    Messaging,
     Immunize,
     DataGrid
   },
