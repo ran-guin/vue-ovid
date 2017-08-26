@@ -15,7 +15,7 @@
             name: 'vaccine',
             title: 'Selecting Vaccines',
             step: '3',
-            message: 'Select string to search for vaccines in existing database<hr><B>Try typing \'MMR\' to test'
+            message: 'Select vaccines by:<UL><LI>searching for string in vaccine / disease in existing database</lI><LI>Scanning barcode from applied agent</LI></UL><hr><B>Try typing \'MMR\' to test'
           },
           staff: {
             name: 'staff',
