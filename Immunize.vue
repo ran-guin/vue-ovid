@@ -4,10 +4,7 @@
 
 <template lang='pug'>
   div
-    div(v-if="showModal")
-      dbRecordModal(v-if="showModal" table='user' type='append' @close="showModal=false")
-    div(v-else)
-      button.btn.btn-success(id="show-modal" @click="showModal = true") Apply Vaccine
+    h3 Immunize (?)
 </template>
 
 <script>

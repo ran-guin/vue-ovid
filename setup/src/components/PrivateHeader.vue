@@ -1,17 +1,27 @@
 <template lang='pug'>
   div.info-header
     div.col-md-6
+      Help(:show="demo" demoStep=2 message="User Help...")
       User(role='patient' :user="patient")
     div.col-md-6
-      User.navbar-right(role='staff' :user="staff")
+      div.navbar-right
+        Help(:show="demo" demoStep=1 message="Staff Help...")
+        User (role='staff' :user="staff")
 </template>
 
 <script>
   import User from '@/components/User'
+  import Help from '@/components/Standard/Help'
   
   export default {
     components: {
-      User
+      User,
+      Help
+    },
+    data () {
+      return {
+        demo: false
+      }
     },
     props: {
       patient: {

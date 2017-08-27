@@ -1,21 +1,20 @@
 <template lang='pug'>
   div
-    PrivateHeader(:patient="patient" :staff="staff" :demo="demo")
     Messaging
     div.scheduled-section 
-      Schedule(:scheduled="scheduled" :demo="demo")
+      Schedule(:scheduled="scheduled")
 
-    div.history-section
-      History(:patient="patient")
+      hr
+      h4 History:
+      DataGrid(:data="history")
+
 </template>
 
 <script>
 import User from './../User.vue'
 import Schedule from './Schedule.vue'
-import History from './History.vue'
 import DataGrid from './../Standard/DataGrid.vue'
 import Messaging from './../Standard/Messaging.vue'
-import PrivateHeader from './../PrivateHeader.vue'
 
 // import { bAlert } from 'bootstrap-vue/lib/components'
 
@@ -24,17 +23,14 @@ export default {
   components: {
     User,
     Schedule,
-    History,
     Messaging,
-    DataGrid,
-    PrivateHeader
+    DataGrid
   },
   data () {
     return {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
-      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-      demo: true
+      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' }
     }
   },
   props: {
@@ -83,10 +79,6 @@ export default {
     height: auto;
   }
   
-  .pageWrapper {
-    margin: 0px;
-  }
-
   .user-section, .scheduled-section {
     width: 80%;
     margin-left: 10%;

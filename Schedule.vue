@@ -1,11 +1,14 @@
 <template lang='pug'>
-  div.schedule-section
-    Search(:id='vaccineString' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addAction="Immunize")
+  span.schedule-section
+    Demo(:demo="demo" name='vaccine')
+    Search(:id='vaccineString' model='vaccine' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addAction="Immunize" modalButton="Save Immunization Record" modalTable='immunize')
+
 </template>
 
 <script>
   import Search from './../Standard/Search.vue'
-
+  import Demo from './Demo.vue'
+  
   export default {
     name: 'schedule',
     data () {
@@ -19,10 +22,14 @@
       patient: {
         type: Object,
         default () { return {} }
+      },
+      demo: {
+        type: Boolean
       }
     },
     components: {
-      Search
+      Search,
+      Demo
     },
     methods: {
       ImmunizePatient: function (data) {
