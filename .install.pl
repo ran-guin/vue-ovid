@@ -19,7 +19,7 @@ foreach my $f (split "\n", $files) {
 	}
 
 	$f=~s/setup\/+//;
-	my $checkdiff = "diff setup/$f ./../../$f\n";
+	my $checkdiff = "diff setup/$f ./../../../$f\n";
 	my $diff = `$checkdiff`;
 	
 	if ($diff) {
