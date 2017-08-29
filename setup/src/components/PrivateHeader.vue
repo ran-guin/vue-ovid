@@ -1,27 +1,31 @@
 <template lang='pug'>
   div.info-header
-    div.col-md-6
-      Help(:show="demo" demoStep=2 message="User Help...")
-      User(role='patient' :user="patient")
-    div.col-md-6
-      div.navbar-right
-        Help(:show="demo" demoStep=1 message="Staff Help...")
-        User (role='staff' :user="staff")
+    div.col-md-2.info-logo
+      a(href='/') 
+        icon(name='home' color='black' scale='2')
+    div.col-md-5.info-left
+      Demo(:demo="demo" name="patient")
+      User(role='patient' :user="patient" :onPick="setPatient" :onClear="clearPatient")
+    div.col-md-5.navbar-right
+      Demo(:demo="demo" name='staff')
+      User(role='staff' :user="staff" :onPick="setStaff" :onClear="clearStaff" include='staff' :search="addStaff")
 </template>
 
 <script>
   import User from '@/components/User'
-  import Help from '@/components/Standard/Help'
-  
+  import Demo from '@/components/ovid/Demo'
+
+  import 'vue-awesome/icons/home'
+
   export default {
-    components: {
-      User,
-      Help
-    },
     data () {
       return {
-        demo: false
+        addStaff: {'user': ['name'], 'staff': ['alias']}
       }
+    },
+    components: {
+      User,
+      Demo
     },
     props: {
       patient: {
@@ -31,6 +35,48 @@
       staff: {
         type: Object,
         default () { return {} }
+      },
+      demo: {
+        type: Boolean
+      }
+    },
+    methods: {
+      setPatient (data) {
+        console.log('set Patient')
+        console.log(JSON.stringify(data))
+
+        var keys = Object.keys(data[0])
+        for (var i = 0; i < keys.length; i++) {
+          this.$set(this.patient, keys[i], data[0][keys[i]])
+        }
+
+        console.log(JSON.stringify(this.patient))
+      },
+      setStaff (data) {
+        console.log('set Staff')
+        console.log(JSON.stringify(data))
+
+        var keys = Object.keys(data[0])
+        for (var i = 0; i < keys.length; i++) {
+          this.$set(this.staff, keys[i], data[0][keys[i]])
+        }
+        console.log(JSON.stringify(this.staff))
+      },
+      clearPatient () {
+        if (this.patient) {
+          var keys = Object.keys(this.patient)
+          for (var j = 0; j < keys.length; j++) {
+            this.$delete(this.patient, keys[j])
+          }
+        } else { console.log('patient already empty') }
+      },
+      clearStaff () {
+        if (this.staff) {
+          var keys = Object.keys(this.staff)
+          for (var j = 0; j < keys.length; j++) {
+            this.$delete(this.staff, keys[j])
+          }
+        } else { console.log('staff already empty') }
       }
     }
   }
@@ -40,7 +86,20 @@
 <style scoped>
 
 .info-header {
-  height: 100px;
+  padding: 10px;
+  height: 60px;
+  background-color: #EEE;
+}
+.info-logo {
+  text-align: left;
+}
+
+.info-left {
+  text-align: left;
+}
+
+.info-right {
+  text-align: right;
 }
 
 h1, h2 {
