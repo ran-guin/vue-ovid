@@ -1,13 +1,14 @@
 <template lang='pug'>
   span.schedule-section
     Demo(:demo="demo" name='vaccine')
-    Search(:id='vaccineString' model='vaccine' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addLinks="addLinks" :addAction="Immunize")
+    Search(:id='vaccineString' model='vaccine' title='Schedule Immunizations' scope='vaccine' method='get' url='https://vids-siv.phac-aspc.gc.ca/api/vaccine.php?' searchParameter='product_name' prompt='Search Disease/Vaccines' :multiSelect="true" :addLinks="addLinks" :addAction="Immunize" :targets="scheduled")
 
 </template>
 
 <script>
   import Search from './../Standard/Search.vue'
   import Demo from './Demo.vue'
+  import config from '@/config.js'
   
   export default {
     name: 'schedule',
@@ -16,9 +17,10 @@
         msg: 'schedule message',
         vaccineString: '',
         Immunize: { 'Immunize': this.ImmunizePatient },
+        userURL: config.userURL,
         addLinks: [
-          {type: 'button', name: 'Immunize Me', modal: {function: this.ImmunizePatient, table: 'user', button: 'Save Immunization Rec', close: 'Cancel'}},
-          {type: 'button', name: 'more info', modal: {url: 'http://localhost:1234/Record_API/search', urlData: {table: 'equipment', din: '<din>'}}}
+          {type: 'button', name: 'Immunize Me', modal: {function: this.ImmunizePatient, table: 'immunize', button: 'Save Immunization Rec', close: 'Cancel'}},
+          {type: 'button', name: 'more info', function: this.MoreInfo}
         ]
       }
     },
@@ -29,6 +31,9 @@
       },
       demo: {
         type: Boolean
+      },
+      scheduled: {
+        type: Array
       }
     },
     components: {
