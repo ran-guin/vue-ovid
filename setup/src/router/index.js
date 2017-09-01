@@ -30,7 +30,7 @@ var router = new Router({
     },
     {
       path: '/ovid',
-      name: 'OVID',
+      name: 'Visit',
       component: Visit
     },
     {

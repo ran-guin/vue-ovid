@@ -5,10 +5,10 @@
         icon(name='home' color='black' scale='2')
     div.col-md-5.info-left
       Demo(:demo="demo" name="patient")
-      User(role='patient' :user="patient" :onPick="setPatient" :onClear="clearPatient")
+      User(role='patient' :user="patient" title='Patient' :globalSearch="userSearch" :fields="userFields")
     div.col-md-5.navbar-right
       Demo(:demo="demo" name='staff')
-      User(role='staff' :user="staff" :onPick="setStaff" :onClear="clearStaff" include='staff' :search="addStaff")
+      User(role='staff' :user="staff" title='staff' include='staff' :globalSearch="staffSearch" :search="addStaff")
 </template>
 
 <script>
@@ -20,7 +20,10 @@
   export default {
     data () {
       return {
-        addStaff: {'user': ['name'], 'staff': ['alias']}
+        addStaff: {'user': ['name'], 'staff': ['alias']},
+        userFields: ['email', 'name'],
+        userSearch: false,
+        staffSearch: true
       }
     },
     components: {
@@ -28,6 +31,10 @@
       Demo
     },
     props: {
+      searchOpen: {
+        type: Boolean,
+        default: false
+      },
       patient: {
         type: Object,
         default () { return {} }
