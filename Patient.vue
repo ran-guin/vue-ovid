@@ -6,7 +6,7 @@
       button(@click.prevent="clearUser") New Patient
       button(@click.prevent="test") Test
     div(v-if="!patient || !patient.id")
-      Search(scope='patient', model='user' url='http://localhost:1234/Record_API/search?table=user', :search="search", prompt='Find Patient')
+      Search(scope='patient', model='user' :url='userUrl', :search="search", prompt='Find Patient')
       hr
       Picked(scope='patient')
       hr
@@ -16,6 +16,7 @@
 <script>
   import Search from './../Standard/Search.vue'
   import SearchResults from './../Standard/SearchResults.vue'
+  import config from '@/config.js'
 
   export default {
     name: 'patient',
@@ -29,7 +30,8 @@
         searchstring: '',
         title: 'Patient Dashboard',
         menu: {options: ['user', 'search', 'history', 'scheduled'], selected: 'user'},
-        search: { user: ['name', 'email'] }
+        search: { user: ['name', 'email'] },
+        userUrl: config.userUrl
       }
     },
     props: {
