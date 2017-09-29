@@ -1,17 +1,22 @@
 <template lang='pug'>
   div
-    PrivateHeader(:patient="patient" :staff="staff" :demo="demo")
+    PrivateHeader(:patient="patient" :staff="staff" :demo="demo" :patients="patients")
     Messaging
-    div.scheduled-section 
-      Schedule(:scheduled="scheduled" :demo="demo")
-
-    div.history-section
-      History(:patient="patient")
+    div.col-md-4
+      Coverage(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :patients="patients")
+      hr
+      Travel(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient")
+    div.col-md-8
+      Schedule(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient") 
+      hr
+      History(:patient="patient" :demo="demo")
 </template>
 
 <script>
 import User from './../User.vue'
 import Schedule from './Schedule.vue'
+import Coverage from './Coverage'
+import Travel from './Travel'
 import History from './History.vue'
 import DataGrid from './../Standard/DataGrid.vue'
 import Messaging from './../Standard/Messaging.vue'
@@ -24,6 +29,8 @@ export default {
   components: {
     User,
     Schedule,
+    Coverage,
+    Travel,
     History,
     Messaging,
     DataGrid,
@@ -42,21 +49,25 @@ export default {
       type: String,
       default: 'dashboard'
     },
+    patients: {
+      type: Array,
+      default: () => []
+    },
     patient: {
       type: Object,
-      default () { return {} }
+      default: () => {}
     },
     staff: {
       type: Object,
-      default () { return {} }
+      default: () => {}
     },
     scheduled: {
       type: Array,
-      default () { return [] }
+      default: () => []
     },
     treated: {
       type: Array,
-      default () { return [] }
+      default: () => []
     },
     history: {
       type: Array,
@@ -87,7 +98,7 @@ export default {
     margin: 0px;
   }
 
-  .user-section, .scheduled-section {
+  .user-section, .scheduled-section, .coverage-section {
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
