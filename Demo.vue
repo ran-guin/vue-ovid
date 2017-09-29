@@ -1,5 +1,5 @@
 <template lang='pug'>
-  span 
+  span.demo-btn 
     Help(:show="demo" :demoStep="docs.step" :title='docs.title' :message="docs.message" name='docs.name')
 </template>
 
@@ -14,7 +14,7 @@
           vaccine: {
             name: 'vaccine',
             title: 'Selecting Vaccines',
-            step: '3',
+            step: '5',
             message: 'Select vaccines by:<UL><LI>searching for string in vaccine / disease in existing database</lI><LI>Scanning barcode from applied agent</LI></UL><hr><B>Try typing \'MMR\' to test'
           },
           staff: {
@@ -28,6 +28,24 @@
             title: 'Selecting a new Patient',
             step: '2',
             message: 'Users may be loaded by:<ul><LI>Generic search/select (eg enter name OR Birthdate OR Health ID)</LI><LI>Field specific search (eg enter Name & Birthdate in separate fields)</LI><hr><b>Try typing \'James\' and clicking on the applicable employee found</b>'
+          },
+          disease: {
+            name: 'disease',
+            title: 'Disease Coverage/Protection',
+            step: '3',
+            message: '<h2>message for this step</h2>'
+          },
+          travel: {
+            name: 'travel',
+            title: 'Selecting a new Patient',
+            step: '4',
+            message: '<h2>message for this step</h2>'
+          },
+          history: {
+            name: 'history',
+            title: 'Patient History',
+            step: '6',
+            message: '<h2>Patient Immunization History</h2>'
           }
         }
       }
@@ -50,6 +68,7 @@
           return this.documentation[this.name]
         } else {
           console.log('no documentation for ' + this.name)
+          return {}
         }
       }
     }
@@ -57,5 +76,8 @@
 </script>
 
 <style scoped>
-
+.demo-btn {
+  margin: 5px;
+  padding: 10px;
+}
 </style>
