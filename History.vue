@@ -1,24 +1,32 @@
 <template lang='pug'>
-  div(v-if="patient && patient.name")
-    hr
-    h3 History for {{patient.name}}:
-    DataGrid(:data="history")
-
+  span.history-section
+    Demo(:demo="demo" name='history')
+    div(v-if="patient && patient.name")
+      h3 History for {{patient.name}}:
+      DataGrid(:data="history")
+    div(v-else)
+      Block(title='Patient History' subheader='[user controls access restrictions to staff]' :bodyList="helpList")
+      
 </template>
 
 <script>
 import DataGrid from './../Standard/DataGrid.vue'
+import Block from './../Standard/Block.vue'
+import Demo from './Demo.vue'
 
 export default {
   name: 'history',
   components: {
-    DataGrid
+    DataGrid,
+    Demo,
+    Block
   },
   data () {
     return {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
-      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' }
+      selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
+      helpList: ['Check Immunization History', 'See pending immunizations', 'Printout immunization history']
     }
   },
   props: {
@@ -33,6 +41,9 @@ export default {
     history: {
       type: Array,
       default () { return [ {'applied': 'n/a', 'vaccine': 'n/a', 'disease': 'n/a', notes: 'nothing found'} ] }
+    },
+    demo: {
+      type: Boolean
     }
   }
 }
