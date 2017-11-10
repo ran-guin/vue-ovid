@@ -2,14 +2,17 @@
   div
     PrivateHeader(:patient="patient" :staff="staff" :demo="demo" :patients="patients")
     Messaging
-    div.col-md-4
-      Coverage(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :patients="patients")
-      hr
-      Travel(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient")
-    div.col-md-8
-      Schedule(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient") 
-      hr
-      History(:patient="patient" :demo="demo")
+    table.table
+      tr
+        td.mainBlock
+          Coverage(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :patients="patients" :payload="payload")
+        td.mainBlock
+          Schedule(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
+      tr
+        td.mainBlock
+          Travel(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
+        td.mainBlock
+          History(:patient="patient" :demo="demo" :payload="payload")
 </template>
 
 <script>
@@ -41,7 +44,8 @@ export default {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-      demo: true
+      demo: false,
+      payload: {user: 'tbd', userid: 0, token: '', access: 'admin'}
     }
   },
   props: {
@@ -96,6 +100,11 @@ export default {
   
   .pageWrapper {
     margin: 0px;
+  }
+
+  .mainBlock {
+    padding: 20px;
+    align-content: top;
   }
 
   .user-section, .scheduled-section, .coverage-section {
