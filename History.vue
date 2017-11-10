@@ -5,7 +5,7 @@
       h3 History for {{patient.name}}:
       DataGrid(:data="history")
     div(v-else)
-      Block(title='Patient History' subheader='[user controls access restrictions to staff]' :bodyList="helpList")
+      Block(title='Immunization History' subheader='[user controls access restrictions to staff]' :alt='alt_help')
       
 </template>
 
@@ -44,6 +44,11 @@ export default {
     },
     demo: {
       type: Boolean
+    }
+  },
+  computed: {
+    alt_help: function () {
+      return '<b>no current history</b><p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
     }
   }
 }
