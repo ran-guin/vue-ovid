@@ -44,8 +44,7 @@ export default {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-      demo: false,
-      payload: {user: 'tbd', userid: 0, token: '', access: 'admin'}
+      demo: false
     }
   },
   props: {
@@ -86,9 +85,17 @@ export default {
 
   created: function () {
     console.log('Initialize visit...')
-    console.log(JSON.stringify(config))
+    var payload = config.demo_payload
+    this.$store.commit('definePayload', payload)
+    console.log(JSON.stringify(payload))
   },
-
+  computed: {
+    payload: function () {
+      var payload = this.$store.state.payload
+      console.log('retrieved ' + JSON.stringify(payload))
+      return payload
+    }
+  },
   methods: {
     find_user () {
       console.log('find me')
