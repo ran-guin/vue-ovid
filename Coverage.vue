@@ -1,7 +1,7 @@
 <template lang='pug'>
   span.disease-section
     Demo(:demo="demo" name='disease')
-    Block(title="Disease Coverage" :trigger="toggleMe" subheader="[available to these users & staff]" :data="coverage" :alt="help" :editable="admin")
+    Block(title="Disease Coverage" :trigger="toggleMe" subheader="[available to these users & staff]" :data="coverage" :alt="help")
     SearchModal(:picked="coverage" :search_options="search_options" close="Finished adding Coverage" :toggle="toggle")
 </template>
 

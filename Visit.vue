@@ -25,7 +25,7 @@ import DataGrid from './../Standard/DataGrid.vue'
 import Messaging from './../Standard/Messaging.vue'
 import PrivateHeader from './../PrivateHeader.vue'
 
-// import { bAlert } from 'bootstrap-vue/lib/components'
+import config from '@/config.js'
 
 export default {
   name: 'ovid',
@@ -82,6 +82,11 @@ export default {
     'incremented': function () {
       console.log('caught in visit')
     }
+  },
+
+  created: function () {
+    console.log('Initialize visit...')
+    console.log(JSON.stringify(config))
   },
 
   methods: {
