@@ -4,11 +4,24 @@
       a(href='/') 
         icon(name='home' color='black' scale='2')
     div.col-md-5.info-left
-      Demo(:demo="demo" name="patient")
-      User(role='patient' :user="patient" title='Patient' :globalSearch="userSearch" :fields="userFields")
-    div.col-md-5.navbar-right
-      Demo(:demo="demo" name='staff')
-      User(role='staff' :user="staff" title='staff' include='staff' :globalSearch="staffSearch" :search="addStaff")
+      b Patient: 
+      span(v-if="payload && payload.patient")
+        b {{payload.patient.name}}
+      span(v-else)
+        b TBD
+
+      <!-- Demo(:demo="demo" name="patient") -->
+      <!-- User(role='patient' :user="patient" title='Patient' :globalSearch="userSearch" :fields="userFields") -->
+    div.col-md-5
+      div.navbar-right
+        b Staff: 
+        span(v-if="payload && payload.staff")
+          b {{payload.staff.name}}
+        span(v-else)
+          b TBD
+
+        <!-- Demo(:demo="demo" name='staff') -->
+        <!-- User(role='staff' :user="staff" title='staff' include='staff' :globalSearch="staffSearch" :search="addStaff") -->
 </template>
 
 <script>
@@ -45,6 +58,9 @@
       },
       demo: {
         type: Boolean
+      },
+      payload: {
+        type: Object
       }
     },
     methods: {
