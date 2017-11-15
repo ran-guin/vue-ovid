@@ -1,25 +1,22 @@
 <template lang='pug'>
   span.disease-section
     Demo(:demo="demo" name='disease')
-    b P: {{payload}}
-    Block(title="Disease Coverage" :trigger="toggleMe" subheader="[available to these users & staff]" :data="coverage" :alt="help")
+    Block(:title='title' :trigger="toggleMe" subheader="[available to these users & staff]" :data="coverage" :alt="help")
     SearchModal(:picked="coverage" :search_options="search_options" close="Finished adding Coverage" :toggle="toggle")
 </template>
 
 <script>
   import Search from './../Standard/Search.vue'
-  import Demo from './Demo.vue'
   import Block from './../Standard/Block.vue'
+  import Demo from './Demo.vue'
   import SearchModal from './../Standard/SearchModal.vue'
   import config from '@/config.js'
-  // import _ from 'lodash'
 
   export default {
     name: 'Disease',
     data () {
       return {
         toggle: false,
-        coverage: [],
         moreCoverage: [],
         search_options: {
           scope: 'disease',
@@ -63,6 +60,17 @@
       SearchModal
     },
     computed: {
+      coverage: function () {
+        return this.$store.getters.getCoverage
+      },
+      title: function () {
+        var t = 'Disease Coverage'
+        if (this.payload && this.payload.patient) {
+          return t + ' for ' + this.payload.patient.name
+        } else {
+          return t
+        }
+      },
       admin: function () {
         if (this.payload && this.payload.access === 'admin') {
           return true
@@ -125,11 +133,6 @@
 
 <style scoped>
   .disease-section {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 40px;
-    /*border: 1px solid black;*/
-    padding: 10px;
+
   }  
 </style>
