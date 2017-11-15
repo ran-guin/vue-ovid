@@ -1,18 +1,19 @@
 <template lang='pug'>
   div
-    PrivateHeader(:patient="patient" :staff="staff" :demo="demo" :patients="patients")
+    PrivateHeader(:payload="payload" :demo="demo")
     Messaging
-    table.table
-      tr
-        td.mainBlock
+    div.flexWrapper
+      div.flexChild.mainBlock
           Coverage(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :patients="patients" :payload="payload")
-        td.mainBlock
+      div.flexChild.mainBlock
           Schedule(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
-      tr
-        td.mainBlock
+    div.flexWrapper
+      div.flexChild.mainBlock
           Travel(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
-        td.mainBlock
+      div.flexChild.mainBlock
           History(:patient="patient" :demo="demo" :payload="payload")
+    PublicFooter
+
 </template>
 
 <script>
@@ -24,6 +25,7 @@ import History from './History.vue'
 import DataGrid from './../Standard/DataGrid.vue'
 import Messaging from './../Standard/Messaging.vue'
 import PrivateHeader from './../PrivateHeader.vue'
+import PublicFooter from './../PublicFooter.vue'
 
 import config from '@/config.js'
 
@@ -37,7 +39,8 @@ export default {
     History,
     Messaging,
     DataGrid,
-    PrivateHeader
+    PrivateHeader,
+    PublicFooter
   },
   data () {
     return {
@@ -87,7 +90,9 @@ export default {
     console.log('Initialize visit...')
     var payload = config.demo_payload
     this.$store.commit('definePayload', payload)
-    console.log(JSON.stringify(payload))
+
+    var patient = payload.patient
+    console.log('patient: ' + JSON.stringify(patient))
   },
   computed: {
     payload: function () {
@@ -112,6 +117,16 @@ export default {
   
   .pageWrapper {
     margin: 0px;
+  }
+
+  .flexWrapper {
+    display: flex;
+    flex-flow: row no-wrap;
+  }
+
+  .flexChild {
+    flex: 1;
+    justify-content: space-around;
   }
 
   .mainBlock {
