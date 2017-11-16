@@ -1,25 +1,48 @@
 <template lang='pug'>
   span.disease-section
-    Demo(:demo="demo" name='disease')
-    Block(:title='title' :trigger="toggleMe" subheader="[available to these users & staff]" :data="coverage" :alt="help")
-    SearchModal(:picked="coverage" :search_options="search_options" close="Finished adding Coverage" :toggle="toggle")
+    div.block
+      div.block-header
+        Demo(:demo="demo" name='disease')
+        h3 Patient Coverage
+          SearchModal(id='cov-modal' :picked="coverage" :search_options="search_options" close="Finished adding Coverage" :toggle="toggle" openButton="+")
+          <!-- TestModal -->
+      div.block-body
+        div(v-if="coverage && coverage.length")
+          DataGrid.block-grid(:data="coverage" :data_options="data_options")
+        div(v-else)
+          b No Current Coverage
+        div(v-if="help")
+          EditableText(:content="help" :onClose="editText" :editable="payload.access==='editor'" scope='alt') 
+      div.block-footer(v-if="footer")
+        div(v-html="footer")
 </template>
 
 <script>
   import Search from './../Standard/Search.vue'
-  import Block from './../Standard/Block.vue'
+  import DataGrid from './../Standard/DataGrid.vue'
+  import EditableText from './../Standard/EditableText.vue'
   import Demo from './Demo.vue'
   import SearchModal from './../Standard/SearchModal.vue'
+  import TestModal from './../Standard/TestModal.vue'
   import config from '@/config.js'
 
   export default {
     name: 'Disease',
+    components: {
+      Search,
+      Demo,
+      EditableText,
+      DataGrid,
+      SearchModal,
+      TestModal
+    },
     data () {
       return {
         toggle: false,
+        showModal: false,
         moreCoverage: [],
         search_options: {
-          scope: 'disease',
+          scope: 'disease coverage',
           method: 'get',
           url: config.diseaseURL,
           prompt: 'Check Protection',
@@ -38,7 +61,9 @@
           {type: 'button', name: 'Cover Me', modal: {function: this.CoverPatient, table: 'Cover', button: 'Schedule Protection', close: 'Cancel'}},
           {type: 'button', name: 'more info', function: this.MoreInfo}
         ],
-        helpList: ['schedule coverage for patients', 'check for contraindications', 'check for side effects', 'check for recommendations']
+        helpList: ['schedule coverage for patients', 'check for contraindications', 'check for side effects', 'check for recommendations'],
+        data_options: {title: 'Current Coverage'},
+        footer: ''
       }
     },
     props: {
@@ -52,12 +77,6 @@
       payload: {
         type: Object
       }
-    },
-    components: {
-      Search,
-      Demo,
-      Block,
-      SearchModal
     },
     computed: {
       coverage: function () {
@@ -86,10 +105,16 @@
         }
       },
       help: function () {
-        return '<b>no current coverage</b><p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
+        return '<p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
       }
     },
     methods: {
+      openModal: function () {
+        console.log('open modal...')
+        console.log('fade in')
+        this.showModal = true;
+        document.getElementById('modal-template').classList.toggle('m-fadeIn')
+      },
       addCoverage: function (data) {
         // UNNECESSARY ... doesn't need to do anything ...
         console.log('add Coverage')
@@ -126,6 +151,28 @@
       },
       toggleMe: function () {
         this.toggle = !this.toggle
+        // if (this.toggle) {
+        //   console.log('fade out')
+        //   document.getElementById('searchModal').classList.toggle('m-fadeOut')
+        // } else {
+        //   console.log('fade in')
+        //   document.getElementById('searchModal').classList.toggle('m-fadeIn')
+        // }
+      },
+      editText (newContent, scope) {
+        if (!scope) { scope = 'content' }
+
+        if (this.updateContent) {
+          console.log('update content based on input prop function')
+          this.updateContent(newContent)
+        } else if (newContent === this[scope]) {
+          console.log('no changes detected in ' + scope)
+        } else {
+          console.log(this[scope] + ' vs ' + newContent)
+          console.log('require input prop function updateContent to update content')
+
+          this.$store.commit('setError', {context: 'update', err: 'no update function supplied to affect content', clear: true})
+        }
       }
     }
   }
@@ -134,5 +181,9 @@
 <style scoped>
   .disease-section {
 
-  }  
+  } 
+/*  .block-body {
+    padding: 20px;
+    background-color: #eee;    
+  } */
 </style>
