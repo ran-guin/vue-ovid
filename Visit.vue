@@ -110,7 +110,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .body {
     height: auto;
   }
@@ -141,5 +141,28 @@ export default {
     margin-top: 40px;
     border: 1px solid black;
     padding: 10px;
+  } 
+
+  .block {
+    padding: 0px;
+    /*border: 1px solid black;*/
+    min-height: 200px;
+  }
+
+  .block-header {
+    padding: 10px;
+    background-color: #ccc;
+  }
+  .block-subheader {
+    padding: 10px;
+    background-color: #ddd;
   }  
+  .block-body {
+    padding: 20px;
+    background-color: #eee;    
+  }
+  .block-footer {
+    padding: 20px;
+    background-color: '#eee';
+  } 
 </style>
