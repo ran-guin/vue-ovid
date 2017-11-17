@@ -1,29 +1,31 @@
 <template lang='pug'>
   div
-    PrivateHeader(:payload="payload" :demo="demo")
-    Messaging
+    PrivateHeader.header(:payload="payload" :demo="demo")
+    div.body.container
+      Messaging
+      div.flexWrapper
+      div.flexChild.mainBlock
+          Coverage(:payload="payload")
+      div.flexChild.mainBlock
+          Schedule(:payload="payload")
     div.flexWrapper
       div.flexChild.mainBlock
-          Coverage(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :patients="patients" :payload="payload")
+          Travel(:payload="payload")
       div.flexChild.mainBlock
-          Schedule(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
-    div.flexWrapper
-      div.flexChild.mainBlock
-          Travel(:scheduled="scheduled" :demo="demo" :staff="staff" :patient="patient" :payload="payload")
-      div.flexChild.mainBlock
-          History(:patient="patient" :demo="demo" :payload="payload")
-    PublicFooter
+          History(:payload="payload")
+
+    PublicFooter.footer
 
 </template>
 
 <script>
-import User from './../User.vue'
 import Schedule from './Schedule.vue'
 import Coverage from './Coverage'
 import Travel from './Travel'
 import History from './History.vue'
-import DataGrid from './../Standard/DataGrid.vue'
+
 import Messaging from './../Standard/Messaging.vue'
+
 import PrivateHeader from './../PrivateHeader.vue'
 import PublicFooter from './../PublicFooter.vue'
 
@@ -32,20 +34,17 @@ import config from '@/config.js'
 export default {
   name: 'ovid',
   components: {
-    User,
     Schedule,
     Coverage,
     Travel,
     History,
     Messaging,
-    DataGrid,
     PrivateHeader,
     PublicFooter
   },
   data () {
     return {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
-      search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
       demo: false
     }
@@ -54,30 +53,6 @@ export default {
     page: {
       type: String,
       default: 'dashboard'
-    },
-    patients: {
-      type: Array,
-      default: () => []
-    },
-    patient: {
-      type: Object,
-      default: () => {}
-    },
-    staff: {
-      type: Object,
-      default: () => {}
-    },
-    scheduled: {
-      type: Array,
-      default: () => []
-    },
-    treated: {
-      type: Array,
-      default: () => []
-    },
-    history: {
-      type: Array,
-      default () { return [ {'applied': 'n/a', 'vaccine': 'n/a', 'disease': 'n/a', notes: 'nothing found'} ] }
     }
   },
   events: {
@@ -111,6 +86,24 @@ export default {
 </script>
 
 <style>
+.page {
+  /*margin-top: -20px;*/
+  height: 100%;
+  width: 100%;
+}
+.body {
+  min-height: calc(100vh - 150px);
+}
+.header {
+  height: 80px;
+  background-color: #ccc;
+}
+.footer {
+  height: 70px;
+  /*padding: 10px;*/
+  background-color: #ccc;
+}
+
   .body {
     height: auto;
   }
