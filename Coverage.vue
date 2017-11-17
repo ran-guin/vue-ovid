@@ -23,7 +23,6 @@
   import EditableText from './../Standard/EditableText.vue'
   import Demo from './Demo.vue'
   import SearchModal from './../Standard/SearchModal.vue'
-  import TestModal from './../Standard/TestModal.vue'
   import config from '@/config.js'
 
   export default {
@@ -33,8 +32,7 @@
       Demo,
       EditableText,
       DataGrid,
-      SearchModal,
-      TestModal
+      SearchModal
     },
     data () {
       return {
@@ -109,12 +107,6 @@
       }
     },
     methods: {
-      openModal: function () {
-        console.log('open modal...')
-        console.log('fade in')
-        this.showModal = true;
-        document.getElementById('modal-template').classList.toggle('m-fadeIn')
-      },
       addCoverage: function (data) {
         // UNNECESSARY ... doesn't need to do anything ...
         console.log('add Coverage')
