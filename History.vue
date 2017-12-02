@@ -1,16 +1,22 @@
 <template lang='pug'>
   span.history-section
-    Demo(:demo="demo" name='history')
-    div(v-if="patient && patient.name")
-      h3 History for {{patient.name}}:
-      DataGrid(:data="history")
-    div(v-else)
-      Block(title='Immunization History' subheader='[user controls access restrictions to staff]' :alt='alt_help')
-      
+    div.block-header
+      Demo(:demo="demo" name='disease')
+      h3 Immunization History
+    div.block-body
+      div(v-if="history && history.length")
+        DataGrid.block-grid(:data="history" :options="data_options")
+      div(v-else)
+        b No Immunization History
+      div(v-if="help")
+        Block(:content="help") 
+    div.block-footer(v-if="footer")
+      div(v-html="footer")
 </template>
 
 <script>
 import DataGrid from './../Standard/DataGrid.vue'
+import Modal from './../Standard/Modal.vue'
 import Block from './../Standard/Block.vue'
 import Demo from './Demo.vue'
 
@@ -18,6 +24,7 @@ export default {
   name: 'history',
   components: {
     DataGrid,
+    Modal,
     Demo,
     Block
   },
@@ -26,7 +33,9 @@ export default {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-      helpList: ['Check Immunization History', 'See pending immunizations', 'Printout immunization history']
+      helpList: ['View Immunization History', 'Printout Immunization History'],
+      data_options: {title: 'History', fields: ['vaccine', 'status']},
+      footer: ''
     }
   },
   props: {
@@ -47,8 +56,8 @@ export default {
     }
   },
   computed: {
-    alt_help: function () {
-      return '<b>no current history</b><p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
+    help: function () {
+      return '<p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
     }
   }
 }
