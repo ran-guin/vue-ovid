@@ -4,11 +4,13 @@
       div.block-header
         Demo(:demo="demo" name='disease')
         h3 Patient Coverage
-          SearchModal(id='cov-modal' :picked="coverage" :search_options="search_options" close="Finished adding Coverage" :toggle="toggle" openButton="+")
-          <!-- TestModal -->
+          span(v-if="status==='loaded'")
+            Modal(id='cov-modal' type='search' :links="links" :options="search_modal" :picked="coverage" closeButton="Finished adding Coverage")
+          span(v-else)
+            b &nbsp; &nbsp; &nbsp loading... 
       div.block-body
         div(v-if="coverage && coverage.length")
-          DataGrid.block-grid(:data="coverage" :data_options="data_options")
+          DataGrid.block-grid(:data="coverage" :options="data_options" :links="links")
         div(v-else)
           b No Current Coverage
         div(v-if="help")
@@ -22,8 +24,10 @@
   import DataGrid from './../Standard/DataGrid.vue'
   import EditableText from './../Standard/EditableText.vue'
   import Demo from './Demo.vue'
-  import SearchModal from './../Standard/SearchModal.vue'
+  import Modal from './../Standard/Modal.vue'
+
   import config from '@/config.js'
+  import axios from 'axios'
 
   export default {
     name: 'Disease',
@@ -32,35 +36,72 @@
       Demo,
       EditableText,
       DataGrid,
-      SearchModal
+      Modal
     },
     data () {
       return {
         toggle: false,
         showModal: false,
         moreCoverage: [],
-        search_options: {
-          scope: 'disease coverage',
-          method: 'get',
-          url: config.diseaseURL,
-          prompt: 'Check Protection',
-          title: 'Disease Coverage',
-          field: 'name',
-          fields: ['name', 'description'],
-          onPick: this.addCoverage,
-          multiSelect: true
+        body: '',
+        custom_links: {
+          'more info': 'info',
+          'Cover Me': 'coverMe',
+          'revert': 'revert'
+        },
+        links: {
+          'more info': this.info,
+          'Cover Me': this.coverMe,
+          'revert': this.revert
+        },
+        data_options: {
+          title: 'Current Coverage',
+          fields: ['condition', 'vaccine', 'status'],
+          addLinks: [
+            { type: 'button', name: 'Cover Me' },
+            { type: 'button', name: 'more info', modal: { title: 'Vaccine Details', onPick: this.info, openButton: '?' } }
+          ]
+        },
+        info_modal: {
+          type: 'block',
+          title: 'Details',
+          header: 'Info header',
+          body: 'info...',
+          openButton: 'Info',
+          closeButton: 'Close info',
+          toggle: false
+        },
+        search_modal: {
+          type: 'search',
+          search: {
+            scope: 'disease',
+            method: 'get',
+            url: config.diseaseMirrorURL,
+            prompt: 'Check Protection',
+            title: 'Disease Coverage',
+            field: 'name',
+            search_fields: ['name', 'description'],
+            show_fields: ['condition', 'vaccine', 'expiry', 'taken', 'status'],
+            onPick: this.addCoverage,
+            multiSelect: true,
+            target: 'coverage'
+          },
+          openButton: 'Add C',
+          closeButton: 'close C',
+          show: false,
+          title: 'Original Title',
+          data: {
+            title: 'Current Coverage',
+            fields: ['condition', 'vaccine', 'status'],
+            addLinks: [{type: 'button', name: 'More info', modal: { onPick: this.info, openButton: '?' }}]
+          }
         },
         msg: 'Disease message',
         diseaseString: '',
         Cover: { 'Cover': this.scheduleProtection },
         userURL: config.userURL,
-        diseaseUrl: config.diseaseUrl,
-        addLinks: [
-          {type: 'button', name: 'Cover Me', modal: {function: this.CoverPatient, table: 'Cover', button: 'Schedule Protection', close: 'Cancel'}},
-          {type: 'button', name: 'more info', function: this.MoreInfo}
-        ],
+        diseaseUrl: config.diseaseMirrorURL,
         helpList: ['schedule coverage for patients', 'check for contraindications', 'check for side effects', 'check for recommendations'],
-        data_options: {title: 'Current Coverage'},
         footer: ''
       }
     },
@@ -76,9 +117,21 @@
         type: Object
       }
     },
+    created: function () {
+      this.$store.commit('defineLinks', this.links)
+    },
     computed: {
+      dlinks: function (name) {
+        return this[name]
+      },
+      status: function () {
+        return this.$store.getters.getStatus
+        // return 'init'
+      },
       coverage: function () {
-        return this.$store.getters.getCoverage
+        var C = this.$store.getters.getHash('coverage') || []
+        console.log('load Coverage: ' + JSON.stringify(C))
+        return C
       },
       title: function () {
         var t = 'Disease Coverage'
@@ -107,6 +160,34 @@
       }
     },
     methods: {
+      info: function (record) {
+        console.log('retrieve more info from record: ' + JSON.stringify(record))
+        var url = 'http://localhost:1234/lookup/user'
+
+        var _this = this
+        axios({url: url, method: 'get'})
+        .then(function (result, err) {
+          if (err) {
+            console.log('error loading data')
+            return false
+          }
+          console.log('connected via ' + url)
+          console.log('axios returned value(s): ' + JSON.stringify(result))
+
+          var data = result.data
+          _this.$store.dispatch('setModalData', data)
+          _this.$store.getters.toggleModal('info-modal')
+        })
+      },
+      coverMe: function (record) {
+        console.log('add record to schedule')
+        console.log(JSON.stringify(record))
+        this.$store.commit('setError', {context: 'update', err: 'Updated record', clear: true})
+      },
+      revert: function (key) {
+        this.modal = this.previous_modal
+      },
+
       addCoverage: function (data) {
         // UNNECESSARY ... doesn't need to do anything ...
         console.log('add Coverage')
@@ -140,16 +221,6 @@
       },
       scheduleProtection: function (disease) {
         console.log('schedule Coverage for ' + disease)
-      },
-      toggleMe: function () {
-        this.toggle = !this.toggle
-        // if (this.toggle) {
-        //   console.log('fade out')
-        //   document.getElementById('searchModal').classList.toggle('m-fadeOut')
-        // } else {
-        //   console.log('fade in')
-        //   document.getElementById('searchModal').classList.toggle('m-fadeIn')
-        // }
       },
       editText (newContent, scope) {
         if (!scope) { scope = 'content' }
