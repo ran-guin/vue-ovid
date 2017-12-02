@@ -4,10 +4,11 @@
       div.block-header
         Demo(:demo="demo" name='vaccine')
         h3 Vaccinations Scheduled
-          Modal(id='schedule-modal' type='search' :search="searchOptions" :data="data_options" :picked="scheduled" closeButton="Close Scheduler" openButton="+")
+          Modal(id='schedule-modal' type='search' :options="search_modal" :picked="scheduled" closeButton="Close Scheduler" openButton="+")
+          Modal(id='immunize-modal')
       div.block-body
         div(v-if="1")
-          DataGrid.block-grid(:data="scheduled" :data_options="data_options")
+          DataGrid.block-grid(:data="scheduled" :options="data_options" :links="links")
         div(v-else)
           b Nothing Scheduled
         div(v-if="help")
@@ -40,29 +41,34 @@
         msg: 'schedule message',
         vaccineString: '',
         Immunize: { 'Immunize': this.ImmunizePatient },
-
+        links: {
+        },
         data_options: {
           title: 'Scheduled Immunizations',
-          fields: ['product_name'],
+          fields: ['name', 'code'],
           addLinks: [
             {type: 'button', name: 'Immunize Me', modal: {record: {access_type: 'append', table: 'immunize', openButton: 'Save Immunization Rec', close: 'Cancel'}}},
             {type: 'button', name: 'more info', modal: {onPick: this.MoreInfo}}
           ]
         },
-        searchOptions: {
-          scope: 'vaccine',
-          model: 'vaccine',
-          method: 'get',
-          url: config.vaccineSearchURL,
-          prompt: 'Search Vaccines',
+        search_modal: {
+          type: 'search',
           title: 'Immunizations',
-          field: 'product_name',
-          search_fields: ['product_name', 'manufacturer', 'din', 'gtin'],
-          show_fields: ['product_name', 'manufacturer', 'din'],
-          // onPick: this.addCoverage,
-          multiSelect: true,
-          target: 'scheduled',
-          picked: this.scheduled
+          search: {
+            scope: 'vaccine',
+            model: 'vaccine',
+            method: 'get',
+            url: config.vaccineMirrorURL,
+            prompt: 'Search Vaccines',
+            field: 'name',
+            search_fields: ['name', 'code'],
+            show_fields: ['name', 'code'],
+            // onPick: this.addCoverage,
+            multiSelect: true,
+            target: 'scheduled',
+            picked: this.scheduled,
+            onPick: this.addSchedule
+          }
         },
         help: '<p ><UL><LI>Schedule Specific Vaccines for Immunization</LI><LI>Search for Vaccines</LI><LI>Check for Side-effects / Contra-indications</LI></UL>',
         gs: true
@@ -87,12 +93,11 @@
         console.log('Immunize Me With ')
         console.log(JSON.stringify(data))
       },
-      MoreInfo: function (data) {
-        console.log('get more info')
+      addSchedule: function (data) {
+        // UNNECESSARY ... doesn't need to do anything ...
+        console.log('add Schedule')
         console.log(JSON.stringify(data))
-      },
-      toggleMe: function () {
-        this.toggle = !this.toggle
+        console.log('to: ' + JSON.stringify(this.scheduled))
       }
     },
     computed: {
