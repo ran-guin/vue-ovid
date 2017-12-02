@@ -1,18 +1,28 @@
+<!--         div.flexChild.mainBlock
+            Schedule(:payload="payload")
+              div.flexWrapper
+                div.flexChild.mainBlock
+                    Travel(:payload="payload")
+                div.flexChild.mainBlock
+                    History(:payload="payload")
+-->
 <template lang='pug'>
   div
     PrivateHeader.header(:payload="payload" :demo="demo")
     div.body.container
       Messaging
+      Modal(id='info-modal' :options="info_modal" :content="infoContent" :data="infoData" closeButton="Close" :toggle="info_modal.toggle")
       div.flexWrapper
-      div.flexChild.mainBlock
+        div.flexChild.mainBlock
           Coverage(:payload="payload")
-      div.flexChild.mainBlock
-          Schedule(:payload="payload")
-    div.flexWrapper
-      div.flexChild.mainBlock
-          Travel(:payload="payload")
-      div.flexChild.mainBlock
-          History(:payload="payload")
+        div.flexChild.mainBlock
+          <!-- Schedule(:payload="payload") -->
+      div.flexWrapper
+        div.flexChild.mainBlock
+            Travel(:payload="payload")
+        div.flexChild.mainBlock
+            History(:payload="payload")
+
 
     PublicFooter.footer
 
@@ -24,6 +34,7 @@ import Coverage from './Coverage'
 import Travel from './Travel'
 import History from './History.vue'
 
+import Modal from './../Standard/Modal.vue'
 import Messaging from './../Standard/Messaging.vue'
 
 import PrivateHeader from './../PrivateHeader.vue'
@@ -39,6 +50,7 @@ export default {
     Travel,
     History,
     Messaging,
+    Modal,
     PrivateHeader,
     PublicFooter
   },
@@ -46,7 +58,16 @@ export default {
     return {
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
-      demo: false
+      demo: false,
+      info_modal: {
+        type: 'block',
+        title: 'Details... ',
+        header: 'Info header',
+        body: 'info...',
+        openButton: 'Info',
+        closeButton: 'Close info',
+        toggle: false
+      }
     }
   },
   props: {
@@ -60,16 +81,27 @@ export default {
       console.log('caught in visit')
     }
   },
-
   created: function () {
     console.log('Initialize visit...')
     var payload = config.demo_payload
     this.$store.commit('definePayload', payload)
 
+    console.log('loaded patient...')
     var patient = payload.patient
+    console.log('ok')
     console.log('patient: ' + JSON.stringify(patient))
   },
   computed: {
+    status: function () {
+      return this.$store.getters.getStatus
+      // return 'init'
+    },
+    infoData: function () {
+      return this.$store.getters.modalData
+    },
+    infoContent: function () {
+      return this.$store.getters.modalContent
+    },
     payload: function () {
       var payload = this.$store.state.payload
       console.log('retrieved ' + JSON.stringify(payload))
