@@ -1,50 +1,92 @@
 <template lang='pug'>
   span
-    Demo(:demo="demo" name='travel')
-    div(v-if="(staff && staff.id) || (patient && patient.id)")
-      Search(:id='travelString' model='travel' title='Travel Coverage' scope='travel' method='get' :url='countryUrl' searchParameter='<region>' prompt='Check Tavel Recommendations' :multiSelect="true" :addLinks="addLinks" :addAction="scheduleTravel" :targets="trips" :fields="input")
-    div(v-else)
-      Block(title='Travel Monitor' :trigger="toggleMe" subheader='[Available to staff and patients]' :alt="alt_help")
-      SearchModal(:picked="coverage" :search_options="search_options" close="Finished adding Travel plans" :toggle="toggle")
-
+    div.block-header
+      Demo(:demo="demo" name='disease')
+      h3 Travel Plans
+        Modal(id='travel-modal' :options="search_modal" :picked="travel" closeButton="Finished adding Travel")
+        Modal(id='travel-modal-info' :options="info_modal" :toggle="info_modal.toggle")
+    div.block-body
+      div(v-if="travel && travel.length")
+        DataGrid.block-grid(:data="travel" :options="data_options")
+      div(v-else)
+        b No Travel Plans
+      div(v-if="help")
+        Block(:content="help") 
+    div.block-footer(v-if="footer")
+      div(v-html="footer")
 </template>
 
 <script>
   import Search from './../Standard/Search.vue'
-  import SearchModal from './../Standard/SearchModal.vue'
+  import Modal from './../Standard/Modal.vue'
+  import DataGrid from './../Standard/DataGrid.vue'
   import Block from './../Standard/Block.vue'
   import Demo from './Demo.vue'
   import config from '@/config.js'
-  
+
   export default {
     name: 'Travel',
+    components: {
+      Search,
+      Modal,
+      Demo,
+      Block,
+      DataGrid
+    },
     data () {
       return {
-        toggle: false,
         msg: 'Travel message',
         coverage: [],
         travelString: 'travelSearch',
-        scheduleTravel: { 'travel': this.travel },
         userURL: config.userURL,
-        countryUrl: config.countryUrl,
+        countryUrl: config.travelUrl,
         input: ['region'],
-        addLinks: [
-          {type: 'button', name: 'Protect me', modal: {function: this.scheduleTravel, table: 'scheduleTravel', button: 'Save Destination', close: 'Cancel'}},
-          {type: 'button', name: '?', function: this.MoreInfo}
-        ],
-
-        search_options: {
-          scope: 'travel',
-          method: 'get',
-          url: config.travelURL,
-          prompt: 'Search Regions',
+        data_options: {
           title: 'Travel Plans',
-          field: 'name',
-          fields: ['country', 'region'],
-          onPick: this.travel,
-          multiSelect: true
+          fields: ['country', 'region', 'subregion'],
+          addLinks: [
+            {type: 'button', name: 'Protect me', modal: {openButton: 'Save'}},
+            {type: 'button', name: '?', function: this.MoreInfo}
+          ]
         },
-        helpList: ['Check recommendations', 'Schedule coverage for patients']
+        links: {
+          'more info': this.info,
+          'Protect Me': this.coverMe,
+          'revert': this.revert
+        },
+        info_modal: {
+          type: 'block',
+          title: 'Info Modal',
+          header: 'Info header',
+          body: 'info...',
+          openButton: 'Info',
+          closeButton: 'Close info',
+          toggle: false
+        },
+        search_modal: {
+          type: 'search',
+          scope: 'travel',
+          search: {
+            model: 'country',
+            method: 'get',
+            url: config.travelURL,
+            prompt: 'Search Regions',
+            title: 'Travel Plans',
+            field: 'country',
+            show_fields: ['country', 'region'],
+            search_fields: ['country', 'region', 'subregion'],
+            onPick: this.travel,
+            multiSelect: true,
+            target: 'travel'
+          },
+          data: {
+            title: 'Current Travel Plans',
+            fields: ['country', 'subregion', 'region'],
+            addLinks: [{type: 'button', name: '?'}]
+          }
+        },
+        helpList: ['Check recommendations', 'Schedule coverage for patients'],
+        footer: ''
       }
     },
     props: {
@@ -62,14 +104,8 @@
         type: Boolean
       }
     },
-    components: {
-      Search,
-      SearchModal,
-      Demo,
-      Block
-    },
     methods: {
-      travel: function (country, timestamp) {
+      scheduleTravel: function (country, timestamp) {
         console.log('schedule travel to  ' + country + ': ' + timestamp)
       },
 
@@ -85,8 +121,29 @@
       }
     },
     computed: {
-      alt_help: function () {
-        return '<b>no current travel plans</b><p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
+      info: function (record) {
+        console.log(JSON.stringify(record))
+        console.log('retrieve more info...')
+
+        this.info_modal.body = 'New travel information Auto-generated...'
+        this.info_modal.toggle = false
+
+        this.$store.getters.toggleModal('cov-modal2')
+      },
+      CoverMe: function (record) {
+        console.log('add record to travel list')
+        console.log(JSON.stringify(record))
+        this.$store.commit('setError', {context: 'update', err: 'Updated record', clear: true})
+      },
+      revert: function (key) {
+        this.modal = this.previous_modal
+      },
+      travel: function () {
+        return this.$store.getters.getHash('travel')
+      },
+
+      help: function () {
+        return '<p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
       }
 
     }
