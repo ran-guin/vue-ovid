@@ -16,7 +16,7 @@
         div.flexChild.mainBlock
           Coverage(:payload="payload")
         div.flexChild.mainBlock
-          <!-- Schedule(:payload="payload") -->
+          Schedule(:payload="payload")
       div.flexWrapper
         div.flexChild.mainBlock
             Travel(:payload="payload")
