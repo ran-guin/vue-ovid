@@ -4,9 +4,9 @@
       div.block-header
         Demo(:demo="demo" name='vaccine')
         h3 Vaccinations Scheduled
-          SearchModal(id='schedule-modal' type='search' :options="searchOptions" close="Close Scheduler" openButton="+")
+          Modal(id='schedule-modal' type='search' :search="searchOptions" :data="data_options" :picked="scheduled" closeButton="Close Scheduler" openButton="+")
       div.block-body
-        div(v-if="scheduled && scheduled.length")
+        div(v-if="1")
           DataGrid.block-grid(:data="scheduled" :data_options="data_options")
         div(v-else)
           b Nothing Scheduled
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import SearchModal from './../Standard/Modal.vue'
+  import Modal from './../Standard/Modal.vue'
   import DataGrid from './../Standard/DataGrid.vue'
   import Block from './../Standard/Block.vue'
   import SearchBlock from './../Standard/SearchBlock.vue'
@@ -27,7 +27,7 @@
   export default {
     name: 'schedule',
     components: {
-      SearchModal,
+      Modal,
       DataGrid,
       Demo,
       Block,
@@ -42,9 +42,11 @@
         Immunize: { 'Immunize': this.ImmunizePatient },
 
         data_options: {
+          title: 'Scheduled Immunizations',
+          fields: ['product_name'],
           addLinks: [
-            {type: 'button', name: 'Immunize Me', modal: {function: this.ImmunizePatient, table: 'immunize', button: 'Save Immunization Rec', close: 'Cancel'}},
-            {type: 'button', name: 'more info', modal: {function: this.MoreInfo}}
+            {type: 'button', name: 'Immunize Me', modal: {record: {access_type: 'append', table: 'immunize', openButton: 'Save Immunization Rec', close: 'Cancel'}}},
+            {type: 'button', name: 'more info', modal: {onPick: this.MoreInfo}}
           ]
         },
         searchOptions: {
@@ -55,9 +57,12 @@
           prompt: 'Search Vaccines',
           title: 'Immunizations',
           field: 'product_name',
-          fields: ['product_name', 'din'],
-          onPick: this.addCoverage,
-          multiSelect: true
+          search_fields: ['product_name', 'manufacturer', 'din', 'gtin'],
+          show_fields: ['product_name', 'manufacturer', 'din'],
+          // onPick: this.addCoverage,
+          multiSelect: true,
+          target: 'scheduled',
+          picked: this.scheduled
         },
         help: '<p ><UL><LI>Schedule Specific Vaccines for Immunization</LI><LI>Search for Vaccines</LI><LI>Check for Side-effects / Contra-indications</LI></UL>',
         gs: true
@@ -72,9 +77,6 @@
       },
       demo: {
         type: Boolean
-      },
-      scheduled: {
-        type: Array
       },
       footer: {
         type: String
@@ -94,6 +96,16 @@
       }
     },
     computed: {
+      scheduled: function () {
+        var S = this.$store.getters.getHash('scheduled')
+        console.log('load Schedule: ' + JSON.stringify(S))
+        return S
+      },
+      updates: function () {
+        var updates = this.$store.getters.getHash('updates')
+        console.log('load updates: ' + updates)
+        return updates
+      },
       options: function () {
         var searchOptions = this.searchOptions
         searchOptions.picked = this.scheduled
