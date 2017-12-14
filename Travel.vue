@@ -3,8 +3,9 @@
     div.block-header
       Demo(:demo="demo" name='disease')
       h3 Travel Plans
-        Modal(id='travel-modal' :options="search_modal" :picked="travel" closeButton="Finished adding Travel")
-        Modal(id='travel-modal-info' :options="info_modal" :toggle="info_modal.toggle")
+        b &nbsp; &nbsp;
+        Modal(id='travel-modal' type='search' :options="search_modal" :picked="travel")
+        <!-- Modal(id='travel-modal-info' :options="info_modal" :toggle="info_modal.toggle") -->
     div.block-body
       div(v-if="travel && travel.length")
         DataGrid.block-grid(:data="travel" :options="data_options")
@@ -45,8 +46,8 @@
           title: 'Travel Plans',
           fields: ['country', 'region', 'subregion'],
           addLinks: [
-            {type: 'button', name: 'Protect me', modal: {openButton: 'Save'}},
-            {type: 'button', name: '?', function: this.MoreInfo}
+            {type: 'button', name: 'Protect me', function: this.CoverMe},
+            {type: 'button', name: '?', function: this.info}
           ]
         },
         links: {
@@ -66,7 +67,10 @@
         search_modal: {
           type: 'search',
           scope: 'travel',
+          openButton: '+',
+          closeButton: 'Finished adding Travel',
           search: {
+            scope: 'country',
             model: 'country',
             method: 'get',
             url: config.travelURL,
@@ -108,37 +112,52 @@
       scheduleTravel: function (country, timestamp) {
         console.log('schedule travel to  ' + country + ': ' + timestamp)
       },
+      info: function (record) {
+        var target
+        if (record.country) {
+          target = record.country
+        }
+        if (record.subregion) {
+          target += ' [' + record.subregion + ']'
+        } else if (record.region) {
+          target += ' [' + record.region + ']'
+        }
 
+        console.log('retrieve more info from record: ' + JSON.stringify(record))
+
+        var data = [
+          {country: record.country, region: record.region, subregion: record.subregion, 'travel_recommendations': 'Travel recommendations from CDC for travel to ' + target}
+        ]
+
+        this.$store.dispatch('setModalData', data)
+        this.$store.getters.toggleModal('info-modal')
+      },
+      CoverMe: function (record) {
+        console.log('add pending coverage records')
+
+        var travelRecord = {condition: 'Malaria', vaccine: 'TBD', status: 'recommended for travel'}
+        this.$store.commit('squeezeHash', {key: 'coverage', record: travelRecord})
+
+        console.log(JSON.stringify(record))
+        this.$store.commit('setError', {context: 'update', err: 'Updated record', clear: true})
+      },
       // scheduleTravel: function () {
       //   console.log('schedule travel for patient')
       // },
 
       MoreInfo: function (region) {
-        console.log('get more info about ' + region)
+        console.log('get more info about ' + JSON.stringify(region))
       },
       toggleMe: function () {
         this.toggle = !this.toggle
       }
     },
     computed: {
-      info: function (record) {
-        console.log(JSON.stringify(record))
-        console.log('retrieve more info...')
-
-        this.info_modal.body = 'New travel information Auto-generated...'
-        this.info_modal.toggle = false
-
-        this.$store.getters.toggleModal('cov-modal2')
-      },
-      CoverMe: function (record) {
-        console.log('add record to travel list')
-        console.log(JSON.stringify(record))
-        this.$store.commit('setError', {context: 'update', err: 'Updated record', clear: true})
-      },
       revert: function (key) {
         this.modal = this.previous_modal
       },
       travel: function () {
+        console.log('load travel data')
         return this.$store.getters.getHash('travel')
       },
 
