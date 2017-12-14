@@ -11,7 +11,7 @@
     PrivateHeader.header(:payload="payload" :demo="demo")
     div.body.container
       Messaging
-      Modal(id='info-modal' :options="info_modal" :content="infoContent" :data="infoData" closeButton="Close" :toggle="info_modal.toggle")
+      Modal(id='info-modal' :options="info_modal" :content="infoContent" :data="infoData")
       div.flexWrapper
         div.flexChild.mainBlock
           Coverage(:payload="payload")
@@ -64,7 +64,6 @@ export default {
         title: 'Details... ',
         header: 'Info header',
         body: 'info...',
-        openButton: 'Info',
         closeButton: 'Close info',
         toggle: false
       }
