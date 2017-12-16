@@ -135,7 +135,7 @@
       CoverMe: function (record) {
         console.log('add pending coverage records')
 
-        var travelRecord = {condition: 'Malaria', vaccine: 'TBD', status: 'recommended for travel'}
+        var travelRecord = {coverage: 'Malaria', vaccine: 'TBD', status: 'recommended for travel'}
         this.$store.commit('squeezeHash', {key: 'coverage', record: travelRecord})
 
         console.log(JSON.stringify(record))
