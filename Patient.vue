@@ -1,10 +1,20 @@
 <template lang='pug'>
-  div.user-section
-    div(v-if="patient && patient.id")
-      b Patient: {{ patient }}
-      span &nbsp; &nbsp;
-      button(@click.prevent="clearUser") New Patient
-      button(@click.prevent="test") Test
+  div
+    div.user-label(v-if="patient && patient.id")
+      span Patient:  &nbsp;
+      b.name {{ patient.name }} 
+      span &nbsp; &nbsp; &nbsp;
+      span Birthdate:  &nbsp;
+      b.birthdate {{ patient.birthdate }} &nbsp;
+      b.age [{{ age }}]
+      span &nbsp; &nbsp; &nbsp;
+      span {{patient.identifier_type}}:  &nbsp; 
+      b.identifier {{patient.identifier}} 
+
+      div.navbar-right
+        button(@click.prevent="clearUser") New Patient
+        button(@click.prevent="test") Test
+        span &nbsp; &nbsp; &nbsp;
     div(v-if="!patient || !patient.id")
       Search(scope='patient', model='user' :url='userUrl', :search="search", prompt='Find Patient')
       hr
@@ -41,6 +51,21 @@
       clearUser () {
         this.$store.commit('clearUser')
       }
+    },
+    computed: {
+      age: function () {
+        return '45 yrs'
+      }
     }
   }
 </script>
+
+<style scoped>
+  .user-label {
+    width: 100%;
+    margin-top: 40px;
+    border: 1px solid black;
+    padding: 20px;
+  } 
+</style>
+
