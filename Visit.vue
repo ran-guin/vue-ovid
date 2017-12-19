@@ -10,6 +10,7 @@
   div
     PrivateHeader.header(:payload="payload" :demo="demo")
     div.body.container
+      Patient(:patient="demoPatient")
       Messaging
           
       p &nbsp;
@@ -63,6 +64,8 @@
 </template>
 
 <script>
+import Patient from './Patient.vue'
+
 import Schedule from './Schedule.vue'
 import Coverage from './Coverage'
 import Travel from './Travel'
@@ -82,6 +85,7 @@ export default {
   name: 'ovid',
   components: {
     DataGrid,
+    Patient,
     Schedule,
     Coverage,
     Travel,
@@ -127,6 +131,13 @@ export default {
         body: 'info...',
         closeButton: 'Close info',
         toggle: false
+      },
+      demoPatient: {
+        name: 'Brian Foster',
+        id: 2,
+        birthdate: '1964-11-27',
+        identifier: 'BCN123456',
+        identifier_type: 'PHN'
       }
     }
   },
