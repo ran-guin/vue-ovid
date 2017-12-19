@@ -17,11 +17,15 @@ export default new Vuex.Store({
     messageContexts: [],
     errors: {},
     errorCount: 0,
+    warnings: {},
+    warningCount: 0,
+    messages: {},
+    messageCount: 0,
     logs: [],
     coverage: [],
     payload: {},
     loaded: false,
-    scheduled: [],
+    // scheduled: [],
     hash: {},
     hash_fields: {},
     hash_map: {},
@@ -32,25 +36,83 @@ export default new Vuex.Store({
     activeModal: '',
     waitingModal: '',
     modalContent: '',
-    modalData: []
+    modalData: [],
+    activeBlock: 'a'
   },
   getters: {
+    defaultBlock: state => id => {
+      console.log('set default ' + id)
+      state.activeBlock = id
+    },
+    toggleBlock: state => id => {
+      console.log('state toggle block: ' + id)
+      var el = document.getElementById(id)
+
+      if (el) {
+        if (state.activeBlock === id) {
+          el.classList.toggle('b-fadeIn')
+          el.classList.toggle('b-fadeOut')
+
+          console.log('clear block' + id)
+          state.activeBlock = ''
+        } else if (state.activeBlock) {
+          var el2 = document.getElementById(state.activeBlock)
+          if (el2) {
+            el2.classList.toggle('b-fadeIn')
+            el2.classList.toggle('b-fadeOut')
+          }
+          setTimeout(() => {
+            el.classList.toggle('b-fadeIn')
+            el.classList.toggle('b-fadeOut')
+            state.activeBlock = id
+          }, 1000)
+        } else {
+          console.log('set ' + el)
+          el.classList.toggle('b-fadeIn')
+          el.classList.toggle('b-fadeOut')
+          state.activeBlock = id
+        }
+      }
+    },
+    showBlock: state => id => {
+      console.log('state toggle block: ' + id)
+      var el = document.getElementById(id)
+
+      if (el) {
+        if (state.activeBlock === id) {
+          // el.classList.toggle('b-fadeIn')
+          // el.classList.toggle('b-fadeOut')
+
+          console.log('clear block' + id)
+          state.activeBlock = ''
+        } else {
+          console.log('set ' + el)
+          el.classList.toggle('b-fadeIn')
+          el.classList.toggle('b-fadeOut')
+          state.activeBlock = id
+        }
+      }
+    },
     toggleModal: state => id => {
       console.log('state toggle modal: ' + id)
       var el = document.getElementById(id)
       if (el) {
+        console.log('found')
         el.classList.toggle('m-fadeIn')
         el.classList.toggle('m-fadeOut')
+        console.log('active: ' + state.activeModal)
 
         if (state.activeModal && state.activeModal !== id) {
           var el2 = document.getElementById(state.activeModal)
           if (el2) {
+            console.log('toggle alt ' + state.activeModal)
             el2.classList.toggle('m-fadeIn')
             el2.classList.toggle('m-fadeOut')
             state.waitingModal = state.activeModal
           }
           state.activeModal = id
         } else if (state.activeModal === id) {
+          console.log('toggle id: ' + state.activeModal)
           if (state.waitingModal) {
             console.log('reopen ' + state.waitingModal)
             var el3 = document.getElementById(state.waitingModal)
@@ -59,6 +121,7 @@ export default new Vuex.Store({
             el3.classList.toggle('m-fadeIn')
             el3.classList.toggle('m-fadeOut')
           } else {
+            console.log('toggle: ' + state.activeModal)
             state.activeModal = ''
           }
         } else {
@@ -80,6 +143,9 @@ export default new Vuex.Store({
     getStatus: state => {
       console.log('got state: ' + state.status)
       return state.status
+    },
+    getActiveBlock: state => {
+      return state.activeBlock
     },
     getLinks: state => {
       console.log('retrieve links')
@@ -108,7 +174,7 @@ export default new Vuex.Store({
 
     },
     loadInfoModal (state, data, append) {
-      console.log('load info modal with data')
+      console.log('load info modal with Data: ' + JSON.stringify(data))
 
       if (!append) {
         console.log('clear previous data...')
@@ -227,25 +293,25 @@ export default new Vuex.Store({
           console.log('axios returned value(s): ' + JSON.stringify(result))
 
           var coverage = [
-            {condition: 'Flu', vaccine: 'H1n1', taken: '2017-01-01', expiry: '2017-09-01', status: 'due'},
-            {condition: 'Measles', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'},
-            {condition: 'Mumps', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'}
+            {coverage: 'Flu [H1N1]', vaccine: 'H1n1', taken: '2017-01-01', expiry: '2017-09-01', status: 'due'},
+            {coverage: 'Measles, Mumps, Rubella', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'}
+            // {condition: 'Mumps', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'}
           ]
 
           console.log('define coverage...')
-          state.hash_fields.coverage = ['condition', 'vaccine', 'taken', 'expiry', 'status']
-          state.hash_map.coverage = {condition: 'name'}
+          state.hash_fields.coverage = ['coverage', 'vaccine', 'taken', 'expiry', 'status']
+          state.hash_map.coverage = {coverage: 'name'}
           state.hash_defaults.coverage = {status: 'pending'}
 
           // Vue.set(state.hash, 'coverage', coverage)
           state.hash = { ...state.hash, coverage: coverage }
           console.log('loaded coverage: ' + JSON.stringify(state.hash.coverage))
 
-          var scheduled = []
-          state.hash = { ...state.hash, scheduled: scheduled }
+          // var scheduled = []
+          // state.hash = { ...state.hash, scheduled: scheduled }
 
           console.log('define travel...')
-          var travel = [{region: 'Asia', subregion: 'Japan'}]
+          var travel = [{country: 'Japan', region: 'Asia', subregion: 'Eastern Asia'}]
 
           state.hash.travel = travel
           console.log('loaded travel...')
@@ -277,7 +343,7 @@ export default new Vuex.Store({
       state.user.name = null
     },
 
-    setError (state, data, clear) {
+    logMessage (state, data, clear) {
       var context = data.context || 'default'
 
       console.log('Error ' + data.context)
@@ -286,6 +352,8 @@ export default new Vuex.Store({
       if (Object.keys(state.errors).indexOf(context) === -1 || data.clear) {
         state.messageContexts.push(context)
         state.errors[context] = []
+        state.warnings[context] = []
+        state.messages[context] = []
       }
 
       if (data.err) {
@@ -293,21 +361,87 @@ export default new Vuex.Store({
           state.errors[context].push(data.err.message)
         } else if (data.err && data.err.constructor === String) {
           state.errors[context].push(data.err)
+        } else {
+          console.log('unrecognized data.err type ?: ' + data.err.constructor)
         }
+        state.errorCount++
+      } else if (data.warning) {
+        state.warnings[context].push(data.warning)
+        state.warningCount++
+      } else if (data.message) {
+        state.messages[context].push(data.message)
+        state.messageCount++
       }
-      state.errorCount++
+
       console.log(state.errorCount + ' ERRORS')
+      console.log(JSON.stringify(state.errors))
+      console.log(state.warningCount + ' Warnings')
+      console.log(JSON.stringify(state.warnings))
+      console.log(state.messageCount + ' Messages')
+      console.log(JSON.stringify(state.messages))
     },
+    setError (state, data, clear) {
+      // replace with logMessage...
+      var context = data.context || 'std'
+
+      console.log('Error ' + data.context)
+      console.log('set Error: ' + data.err)
+
+      if (Object.keys(state.errors).indexOf(context) === -1 || data.clear) {
+        state.messageContexts.push(context)
+        state.errors[context] = []
+        state.warnings[context] = []
+        state.messages[context] = []
+      }
+
+      if (data.err) {
+        if (data.err.constructor === Error && data.err.message) {
+          state.errors[context].push(data.err.message)
+        } else if (data.err && data.err.constructor === String) {
+          state.errors[context].push(data.err)
+        } else {
+          console.log('unrecognized data.err type ?: ' + data.err.constructor)
+        }
+        state.errorCount++
+      } else if (data.warning) {
+        state.warnings[context].push(data.warning)
+        state.warningCount++
+      } else if (data.message) {
+        state.messages[context].push(data.warning)
+        state.messageCount++
+      }
+
+      console.log(state.errorCount + ' ERRORS')
+      console.log(state.warningCount + ' Warnings')
+      console.log(state.messageCount + ' Messages')
+    },
+
     clearErrors (state, context) {
       console.log('clear errors...')
       if (context) {
         state.errors[context] = []
+        state.warnings[context] = []
+        state.messages[context] = []
       } else {
         state.errors = {}
+        state.warnings = {}
+        state.messages = {}
       }
       state.errorCount = 0
+      state.warningCount = 0
+      state.messageCount = 0
     },
 
+    hideActive (state) {
+      console.log('hide active')
+      if (state.activeBlock) {
+        var el = document.getElementById(state.activeBlock)
+        el.classList.toggle('b-fadeIn')
+        el.classList.toggle('b-fadeOut')
+        state.activeBlock = ''
+        console.log('cleared')
+      }
+    },
     log (state, data) {
       console.log('log ' + JSON.stringify(data))
       state.logs.push(data)
@@ -315,9 +449,15 @@ export default new Vuex.Store({
   },
   actions: {
     setModalData (state, data) {
-      console.log('load info modal with data')
+      console.log('load info modal with data: ' + JSON.stringify(data))
       var append = false
       state.commit('loadInfoModal', data, append)
+    },
+    hideActiveBlock (context) {
+      return new Promise((resolve, reject) => {
+        context.commit('hideActive')
+        resolve()
+      })
     }
   }
 })
