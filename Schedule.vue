@@ -49,7 +49,6 @@
           fields: ['vaccine', 'coverage', 'status'],
           baseClass: 'scheduled',
           fieldClass: 'status',
-
           addLinks: [
             {type: 'button', name: 'Immunize Me', closeButton: 'Finished Immunization', modal: {onPick: this.immunizePatient}},
             {type: 'button', name: 'more info', modal: {onPick: this.info}}
@@ -59,7 +58,8 @@
           access_type: 'append',
           table: 'immunize',
           close: 'Cancel',
-          toggle: false
+          toggle: false,
+          onSave: this.saveImmunization
         },
         search_modal: {
           type: 'search',
@@ -111,6 +111,12 @@
 
         this.$store.dispatch('setModalData', data)
         this.$store.getters.toggleModal('immunize-modal')
+      },
+      saveImmunization: function (record) {
+        console.log('save immunization record...')
+        console.log(JSON.stringify(record))
+        var msgReturned = 'saved immunization record'
+        this.$store.commit('logMessage', { message: msgReturned })
       },
       addSchedule: function (data) {
         // UNNECESSARY ... doesn't need to do anything ...
