@@ -155,7 +155,33 @@ export default {
   created: function () {
     console.log('Initialize visit...')
     var payload = config.demo_payload
-    this.$store.commit('definePayload', payload)
+    var coverage = config.demo_coverage
+    var travel = config.demo_travel
+
+    console.log('payload: ' + JSON.stringify(payload))
+    this.$store.commit('setHash', {key: 'payload', value: payload})
+
+    var showPayload = this.$store.getters.getHash('payload')
+    console.log('payload: ' + JSON.stringify(showPayload))
+
+    console.log('define hash...')
+    this.$store.commit('defineHash', {
+      key: 'coverage',
+      defaults: {status: 'pending'},
+      map: {coverage: 'name'},
+      fields: ['id', 'coverage', 'vaccine', 'taken', 'expiry', 'status']
+    })
+
+    console.log('load coverage...' + JSON.stringify(coverage))
+
+    for (var i = 0; i < coverage.length; i++) {
+      this.$store.commit('squeezeHash', {key: 'coverage', record: coverage[i]})
+    }
+
+    console.log('load travel...')
+    for (var k = 0; k < travel.length; k++) {
+      this.$store.commit('squeezeHash', {key: 'travel', record: travel[k]})
+    }
 
     console.log('loaded patient...')
     var patient = payload.patient
@@ -249,6 +275,7 @@ export default {
     align-content: top;
   }
 
+        age: 12
   .user-section, .scheduled-section, .coverage-section {
     width: 80%;
     margin-left: 10%;
