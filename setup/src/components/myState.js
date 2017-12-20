@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import axios from 'axios'
-import config from '@/config.js'
+// import axios from 'axios'
+// import config from '@/config.js'
 
 Vue.use(Vuex)
 
@@ -129,6 +129,9 @@ export default new Vuex.Store({
         }
       } else { console.log('no element ' + id) }
     },
+    payload: state => {
+      return state.payload
+    },
     modalData: state => {
       console.log('retrieve ' + state.modalData)
       return state.modalData
@@ -173,6 +176,13 @@ export default new Vuex.Store({
     resetUser (state) {
 
     },
+    appendModal (state, fields) {
+      console.log('add ' + JSON.stringify(fields))
+      for (var i = 0; i < fields.length; i++) {
+        var l = state.modalData.length
+        Vue.set(state.modalData, l, fields[i])
+      }
+    },
     loadInfoModal (state, data, append) {
       console.log('load info modal with Data: ' + JSON.stringify(data))
 
@@ -196,8 +206,39 @@ export default new Vuex.Store({
     defineLinks (state, data) {
       state.links = data
     },
-    setHash (state, key, data) {
+    defineHash (state, options) {
+      // define custom hash - typically called from created section of primary component
+      console.log('define hash as: ' + JSON.stringify(options))
+
+      if (!options) { options = {} }
+      var key = options.key
+      var fields = options.fields
+      var defaults = options.defaults
+      var map = options.map
+
+      if (key && fields && fields.length) {
+        state.hash_fields[key] = fields
+        // for (var i = 0; i < fields.length; i++) {
+        //   Vue.set(state.hash_fields[key], i, fields[i])
+        //   console.log('set ' + i + ' to ' + fields[i])
+        // }
+        if (defaults) {
+          state.hash_defaults[key] = defaults
+        }
+
+        if (map) {
+          state.hash_map[key] = map
+        }
+      } else {
+        console.log('hash defined without key or fields ?')
+      }
+    },
+    setHash (state, options) {
+      var key = options.key
+      var data = options.value
+
       state.hash[key] = data
+      console.log('set ' + key + ' to ' + JSON.stringify(data))
     },
     pushHash (state, data) {
       var key = data.key
@@ -220,6 +261,7 @@ export default new Vuex.Store({
       }
     },
     squeezeHash (state, data) {
+      // similar to setHash, but only includes keys based on pre-defined fields for this hash element
       console.log('squeeze')
       console.log(JSON.stringify(data))
       var key = data.key
@@ -239,15 +281,17 @@ export default new Vuex.Store({
           var info = 0
           console.log('add fields: ' + fields.join(','))
           for (var i = 0; i < fields.length; i++) {
-            if (record[fields[i]]) {
-              newRecord[fields[i]] = record[fields[i]]
+            var field = fields[i]
+
+            if (record[field]) {
+              newRecord[field] = record[field]
               info++
-            } else if (map && map[fields[i]] && record[map[fields[i]]]) {
-              console.log('mapped ' + fields[i] + ' to ' + map[fields[i]])
-              newRecord[fields[i]] = record[map[fields[i]]]
+            } else if (map && map[field] && record[map[field]]) {
+              console.log('mapped ' + field + ' to ' + map[field])
+              newRecord[field] = record[map[field]]
               info++
-            } else if (defaults && defaults[fields[i]]) {
-              newRecord[fields[i]] = defaults[fields[i]]
+            } else if (defaults && defaults[field]) {
+              newRecord[field] = defaults[field]
             }
           }
           console.log('info...')
@@ -275,63 +319,6 @@ export default new Vuex.Store({
         console.log('incorrect input data (require key and record and defined hash_fields)')
         return null
       }
-    },
-    definePayload (state, data) {
-      console.log('defined payload')
-      state.status = 'loading'
-      state.payload = data
-      state.loaded = true
-
-      var url = config.diseaseMirrorURL
-      axios({url: url, method: 'post'})
-        .then(function (result, err) {
-          if (err) {
-            console.log('error getting payload')
-            return false
-          }
-          console.log('connected via ' + url)
-          console.log('axios returned value(s): ' + JSON.stringify(result))
-
-          var coverage = [
-            {coverage: 'Flu [H1N1]', vaccine: 'H1n1', taken: '2017-01-01', expiry: '2017-09-01', status: 'due'},
-            {coverage: 'Measles, Mumps, Rubella', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'}
-            // {condition: 'Mumps', vaccine: 'MMR', taken: '2017-01-01', expiry: '2019-09-01', status: 'covered'}
-          ]
-
-          console.log('define coverage...')
-          state.hash_fields.coverage = ['coverage', 'vaccine', 'taken', 'expiry', 'status']
-          state.hash_map.coverage = {coverage: 'name'}
-          state.hash_defaults.coverage = {status: 'pending'}
-
-          // Vue.set(state.hash, 'coverage', coverage)
-          state.hash = { ...state.hash, coverage: coverage }
-          console.log('loaded coverage: ' + JSON.stringify(state.hash.coverage))
-
-          // var scheduled = []
-          // state.hash = { ...state.hash, scheduled: scheduled }
-
-          console.log('define travel...')
-          var travel = [{country: 'Japan', region: 'Asia', subregion: 'Eastern Asia'}]
-
-          state.hash.travel = travel
-          console.log('loaded travel...')
-
-          if (err) {
-            console.log('axios call error')
-          } else {
-            console.log('done with payload')
-          }
-
-          state.status = 'loaded'
-          // state.updates++
-          return true
-        })
-        .catch(function (err2) {
-          console.log('Err2: ' + err2)
-          console.log('could not connect to ' + url)
-          state.status = 'error'
-          return false
-        })
     },
 
     increment: state => state.count++,
