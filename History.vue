@@ -20,6 +20,8 @@ import Modal from './../Standard/Modal.vue'
 import Block from './../Standard/Block.vue'
 import Demo from './Demo.vue'
 
+import config from '@/config.js'
+
 export default {
   name: 'history',
   components: {
@@ -34,7 +36,7 @@ export default {
       search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
       helpList: ['View Immunization History', 'Printout Immunization History'],
-      data_options: {title: 'History', fields: ['vaccine', 'status']},
+      data_options: {title: 'History', fields: ['vaccine', 'coverage', 'applied', 'expiry', 'reactionLevel', 'notes']},
       footer: ''
     }
   },
@@ -47,15 +49,27 @@ export default {
       type: Object,
       default () { return {} }
     },
-    history: {
-      type: Array,
-      default () { return [ {'applied': 'n/a', 'vaccine': 'n/a', 'disease': 'n/a', notes: 'nothing found'} ] }
-    },
     demo: {
       type: Boolean
     }
   },
+  created: function () {
+    var history = config.demo_history
+
+    this.$store.commit('setHash', {key: 'history'})
+    var fields = ['id', 'vaccine', 'coverage', 'applied', 'expiry', 'reactionLevel', 'status', 'notes']
+    this.$store.commit('defineHash', 'history', fields)
+
+    for (var i = 0; i < history.length; i++) {
+      this.$store.commit('squeezeHash', {key: 'history', record: history[i]})
+    }
+  },
   computed: {
+    history: function () {
+      var C = this.$store.getters.getHash('history') || []
+      console.log('load History: ' + JSON.stringify(C))
+      return C
+    },
     help: function () {
       return '<p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'
     }
