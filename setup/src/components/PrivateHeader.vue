@@ -1,24 +1,24 @@
 <template lang='pug'>
   div.info-header
     div.col-md-2.info-logo
-      a(href='/') 
-        icon(name='home' color='black' scale='2')
-    div.col-md-5.info-left
-      b Patient: 
-      span(v-if="payload && payload.patient")
-        b {{payload.patient.name}}
-      span(v-else)
-        b TBD
+      a(href='/')
+        img(src='/static/images/needleIcon.png' height='40px')
+    div.col-md-6.info-left
+      b.input-lg OVID
+      
 
       <!-- Demo(:demo="demo" name="patient") -->
       <!-- User(role='patient' :user="patient" title='Patient' :globalSearch="userSearch" :fields="userFields") -->
-    div.col-md-5
-      div.navbar-right
-        b Staff: 
-        span(v-if="payload && payload.staff")
-          b {{payload.staff.name}}
-        span(v-else)
-          b TBD
+    div.col-md-4
+      <!-- navbar-right items listed from right to left ! -->
+      span.navbar-right
+        Popup(icon='bars')
+      span.navbar-right
+        b.input-lg Staff: 
+          span(v-if="payload && payload.staff")
+            b {{payload.staff.name}}
+          span(v-else)
+            b TBD
 
         <!-- Demo(:demo="demo" name='staff') -->
         <!-- User(role='staff' :user="staff" title='staff' include='staff' :globalSearch="staffSearch" :search="addStaff") -->
@@ -27,8 +27,10 @@
 <script>
   import User from '@/components/User'
   import Demo from '@/components/ovid/Demo'
+  import Popup from '@/components/Standard/Popup'
 
   import 'vue-awesome/icons/home'
+  import 'vue-awesome/icons/bars'
 
   export default {
     data () {
@@ -41,7 +43,8 @@
     },
     components: {
       User,
-      Demo
+      Demo,
+      Popup
     },
     props: {
       searchOpen: {
@@ -142,4 +145,5 @@ li {
 a {
   color: #42b983;
 }
+
 </style>
