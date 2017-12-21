@@ -274,26 +274,4 @@
   .disease-section {
 
   }
-  .coverage.covered {
-    background-color: lightgreen;    
-  }
-  .coverage.recommended {
-    display:none;
-  }
-  .coverage.expiring {
-    background-color: yellow;        
-  }
-  .coverage.expired {
-    background-color: pink;        
-  }
-  .coverage.due {
-    display: none;
-  } 
-  .coverage.pending {
-    display: none;
-  }
-/*  .block-body {
-    padding: 20px;
-    background-color: #eee;    
-  } */
 </style>
