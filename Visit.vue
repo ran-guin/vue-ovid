@@ -81,6 +81,13 @@ import PublicFooter from './../PublicFooter.vue'
 
 import config from '@/config.js'
 
+import 'vue-awesome/icons/check-circle'
+import 'vue-awesome/icons/warning'
+import 'vue-awesome/icons/home'
+import 'vue-awesome/icons/edit'
+import 'vue-awesome/icons/close'
+import 'vue-awesome/icons/question-circle'
+
 export default {
   name: 'ovid',
   components: {
@@ -107,21 +114,25 @@ export default {
         title: 'Covered',
         // fields: ['coverage', 'vaccine', 'status'],
         baseClass: 'coverage',
-        fieldClass: 'status'
+        fieldClass: 'status',
+        addLinks: [ { type: 'icon', name: 'check-circle', colour: 'blue', modal: { onPick: this.info, openButton: '?' } } ]
       },
       pending_options: {
         fields: ['coverage'],
         title: 'Pending',
         // fields: ['coverage', 'vaccine', 'status'],
         baseClass: 'scheduled',
-        fieldClass: 'status'
+        fieldClass: 'status',
+        addLinks: [ { type: 'icon', name: 'warning', colour: 'black', modal: { onPick: this.info, openButton: '?' } } ]
       },
       travel_options: {
         fields: ['country', 'subregion'],
         title: 'Travel Plans',
         // fields: ['coverage', 'vaccine', 'status'],
         baseClass: 'coverage',
-        fieldClass: 'status'
+        fieldClass: 'status',
+        addLinks: [ { type: 'icon', name: 'check-circle', colour: 'blue', modal: { onPick: this.info, openButton: '?' } } ]
+
       },
 
       info_modal: {
@@ -218,6 +229,13 @@ export default {
     }
   },
   methods: {
+    info: function (record) {
+      console.log('retrieve more coverage info from record: ' + JSON.stringify(record))
+      var data = []
+      data.push(record)
+      this.$store.dispatch('setModalData', data)
+      this.$store.getters.toggleModal('info-modal')
+    },
     toggleVisibility: function (id) {
       this.$store.getters.toggleBlock(id)
       // this.$store.dispatch('hideActiveBlock')
@@ -343,5 +361,24 @@ export default {
 /*    opacity: 1;
     transition: opacity 1s, height 0;
 */  }
+
+  .coverage.covered {
+    background-color: lightgreen;    
+  }
+  .coverage.recommended {
+    display:none;
+  }
+  .coverage.expiring {
+    background-color: yellow;        
+  }
+  .coverage.expired {
+    background-color: pink;        
+  }
+  .coverage.due {
+    display: none;
+  } 
+  .coverage.pending {
+    display: none;
+  }
 
 </style>
