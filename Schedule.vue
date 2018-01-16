@@ -5,11 +5,11 @@
         Demo(:demo="demo" name='vaccine')
         h3 Vaccinations Scheduled
           b &nbsp; &nbsp;
-          Modal(id='schedule-modal' type='search' :options="search_modal" :picked="coverage")
+          Modal(id='schedule-modal' type='search' :options="search_modal" :picked="coverage" :onDelete='deleteItem')
           Modal(id='immunize-modal' type='record' :options="immunize_options" :append="append")
       div.block-body
         div(v-if="1")
-          DataGrid.block-grid(:data="coverage" :options="data_options" :links="links" baseClass='scheduled' fieldClass='status')
+          DataGrid.block-grid(:options="data_options" :links="links" baseClass='scheduled' fieldClass='status')
         div(v-else)
           b Nothing Scheduled
         div(v-if="help")
@@ -47,6 +47,7 @@
         },
         data_options: {
           title: 'Scheduled Immunizations',
+          stored: 'coverage',
           fields: ['vaccine', 'coverage', 'status'],
           baseClass: 'scheduled',
           fieldClass: 'status',
@@ -80,7 +81,12 @@
             multiSelect: true,
             target: 'coverage',
             picked: this.coverage,
-            onPick: this.addSchedule
+            onPick: this.addSchedule,
+            stored: 'coverage'
+          },
+          data: {
+            onDelete: this.deleteItem,
+            stored: 'coverage'
           }
         },
         help: '<p ><UL><LI>Schedule Specific Vaccines for Immunization</LI><LI>Search for Vaccines</LI><LI>Check for Side-effects / Contra-indications</LI></UL>',
@@ -99,6 +105,9 @@
       },
       footer: {
         type: String
+      },
+      cov: {
+        type: Array
       }
     },
     methods: {
@@ -136,9 +145,16 @@
       },
       addSchedule: function (data) {
         // UNNECESSARY ... doesn't need to do anything ...
-        console.log('add Schedule')
+        console.log('DYNO: add Schedule')
         console.log(JSON.stringify(data))
         console.log('to: ' + JSON.stringify(this.coverage))
+      },
+      deleteItem: function (index, key) {
+        if (!key) { key = 'coverage' }
+        console.log('DYNO: delete ' + key + ' item: ' + index)
+        // this.$store.dispatch('deleteHashItem', {key: key, index: index})
+
+        this.$store.commit('removeHashItem', {key: key, index: index})
       },
       info: function (record) {
         console.log('retrieve more schedule info from record: ' + JSON.stringify(record))
@@ -153,9 +169,16 @@
     },
     computed: {
       coverage: function () {
-        var S = this.$store.getters.getHash('coverage')
-        console.log('load Schedule: ' + JSON.stringify(S))
-        return S
+        var C = this.$store.getters.getHash('coverage')
+        var S = []
+        // console.log('loaded Coverage: ' + JSON.stringify(C))
+        // for (var i = 0; i < C.length; i++) {
+        //   if (C[i].status && C[i].status === 'covered') {
+        //     S.push(C[i])
+        //   }
+        // }
+        console.log('loaded Schedule:' + JSON.stringify(S))
+        return C
       },
       updates: function () {
         var updates = this.$store.getters.getHash('updates')
@@ -181,7 +204,8 @@
     padding: 10px;
   }
   .scheduled.covered {
-    display: none;
+    background-color: red;
+    /*display: none;*/
   }
   .scheduled.due {
     background-color: yellow;
