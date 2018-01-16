@@ -1,20 +1,12 @@
-<!--         div.flexChild.mainBlock
-            Schedule(:payload="payload")
-              div.flexWrapper
-                div.flexChild.mainBlock
-                    Travel(:payload="payload")
-                div.flexChild.mainBlock
-                    History(:payload="payload")
--->
 <template lang='pug'>
   div
     PrivateHeader.header(:payload="payload" :demo="demo")
     div.body.container
       Patient(:patient="demoPatient")
       Messaging
-          
       p &nbsp;
-
+      b {{coverage}}
+      hr
       div.col-md-3.coverageBlock
           b Current Status:
           <!-- div.flexWrapper -->
@@ -39,7 +31,6 @@
             <!-- a(href='#' @click.prevent="toggleVisibility('HistoryBlock')") History -->
             a(href='#' @click.prevent="show='history'") History
             span &nbsp; &nbsp;
-            
           Modal(id='info-modal' :options="info_modal" :content="infoContent" :data="infoData")
 
           div(v-if="show==='covered'")
@@ -47,20 +38,15 @@
               Coverage(:payload="payload")
           div(v-if="show==='scheduled'")
             div.mainSection#ScheduledBlock
-              Schedule(:payload="payload")
+              Schedule(:payload="payload" :cov="coverage")
           div(v-if="show==='travel'")
             div.mainSection#TravelBlock
               Travel(:payload="payload")
           div(v-if="show==='history'")
             div.mainSection#HistoryBlock
               History(:payload="payload")
-
-
-        <!-- Schedule(:payload="payload") -->
-
-
+          <!-- Schedule(:payload="payload") -->
     PublicFooter.footer
-
 </template>
 
 <script>
@@ -132,9 +118,7 @@ export default {
         baseClass: 'coverage',
         fieldClass: 'status',
         addLinks: [ { type: 'icon', name: 'check-circle', colour: 'blue', modal: { onPick: this.info, openButton: '?' } } ]
-
       },
-
       info_modal: {
         type: 'block',
         title: 'Details... ',
@@ -293,7 +277,6 @@ export default {
     align-content: top;
   }
 
-        age: 12
   .user-section, .scheduled-section, .coverage-section {
     width: 80%;
     margin-left: 10%;
@@ -301,14 +284,13 @@ export default {
     margin-top: 40px;
     border: 1px solid black;
     padding: 10px;
-  } 
+  }
 
   .block {
     padding: 0px;
     /*border: 1px solid black;*/
     min-height: 200px;
   }
-
   .block-header {
     padding: 10px;
     background-color: #ccc;
@@ -316,16 +298,15 @@ export default {
   .block-subheader {
     padding: 10px;
     background-color: #ddd;
-  }  
+  }
   .block-body {
     padding: 20px;
-    background-color: #eee;    
+    background-color: #eee;
   }
   .block-footer {
     padding: 20px;
     background-color: '#eee';
-  } 
-
+  }
   .coverageBlock {
     border: solid black 3px;
     padding: 20px;
@@ -340,45 +321,5 @@ export default {
   }
   .mainSection {
     transition: visibility 0s linear 0s, opacity 1000ms;
-
   }
-   {
-  /*  visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s linear 1000ms, opacity 1000ms;
-*/
-    display: none;
- /*   opacity: 0;
-    transition: opacity 1s, height 0 1s;
-    height: 0;*/
-  }
-  .b-fadeIn {
-  /*  visibility: visible;
-    opacity: 1;
-    transition: visibility 0s linear 0s, opacity 1000ms;
-*/
-    display: block;
-/*    opacity: 1;
-    transition: opacity 1s, height 0;
-*/  }
-
-  .coverage.covered {
-    background-color: lightgreen;    
-  }
-  .coverage.recommended {
-    display:none;
-  }
-  .coverage.expiring {
-    background-color: yellow;        
-  }
-  .coverage.expired {
-    background-color: pink;        
-  }
-  .coverage.due {
-    display: none;
-  } 
-  .coverage.pending {
-    display: none;
-  }
-
 </style>
