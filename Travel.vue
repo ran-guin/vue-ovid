@@ -39,7 +39,7 @@
         msg: 'Travel message',
         coverage: [],
         travelString: 'travelSearch',
-        userURL: config.userURL,
+        userURL: config.userUrl,
         countryUrl: config.travelUrl,
         input: ['region'],
         data_options: {
@@ -73,7 +73,7 @@
             scope: 'country',
             model: 'country',
             method: 'get',
-            url: config.travelURL,
+            url: config.travelUrl,
             prompt: 'Search Regions',
             title: 'Travel Plans',
             field: 'country',
