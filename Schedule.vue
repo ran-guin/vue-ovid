@@ -72,7 +72,7 @@
             scope: 'coverage',
             model: 'coverage',
             method: 'get',
-            url: config.coverageMirrorURL,
+            url: config.coverageMirrorUrl,
             prompt: 'Search Vaccines',
             field: 'vaccine',
             search_fields: ['vaccine', 'code', 'coverage'],
