@@ -99,7 +99,7 @@
           search: {
             scope: 'disease',
             method: 'get',
-            url: config.diseaseMirrorURL,
+            url: config.diseaseMirrorUrl,
             prompt: 'Check Protection',
             title: 'Disease Coverage',
             field: 'name',
@@ -118,8 +118,8 @@
         msg: 'Disease message',
         diseaseString: '',
         Cover: { 'Cover': this.scheduleProtection },
-        userURL: config.userURL,
-        diseaseUrl: config.diseaseMirrorURL,
+        userURL: config.userUrl,
+        diseaseUrl: config.diseaseMirrorUrl,
         helpList: ['schedule coverage for patients', 'check for contraindications', 'check for side effects', 'check for recommendations'],
         footer: ''
       }
