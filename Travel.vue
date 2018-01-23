@@ -69,6 +69,8 @@
           scope: 'travel',
           openButton: '+',
           closeButton: 'Finished adding Travel',
+          data_options: {fields: ['country', 'region', 'subregion']},
+
           search: {
             scope: 'country',
             model: 'country',
@@ -126,8 +128,9 @@
         console.log('retrieve more info from record: ' + JSON.stringify(record))
 
         var data = [
-          {country: record.country, region: record.region, subregion: record.subregion, 'travel_recommendations': 'Travel recommendations from CDC for travel to ' + target}
+          {country: record.country, region: record.region, subregion: record.subregion}
         ]
+        data.details = 'detailed info regarding travel to ' + target
 
         this.$store.dispatch('setModalData', data)
         this.$store.getters.toggleModal('info-modal')
