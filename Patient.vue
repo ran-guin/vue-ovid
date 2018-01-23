@@ -6,7 +6,7 @@
       span &nbsp; &nbsp; &nbsp;
       span Birthdate:  &nbsp;
       b.birthdate {{ patient.birthdate }} &nbsp;
-      b.age [{{ age }}]
+      b.age(v-if='patient.birthdate') [{{ age }} yrs]
       span &nbsp; &nbsp; &nbsp;
       span {{patient.identifier_type}}:  &nbsp; 
       b.identifier {{patient.identifier}} 
@@ -54,7 +54,14 @@
     },
     computed: {
       age: function () {
-        return '45 yrs'
+        if (this.patient && this.patient.birthdate) {
+          var bd = new Date(this.patient.birthdate)
+          var ageDifMs = Date.now() - bd.getTime()
+          var ageDate = new Date(ageDifMs) // miliseconds from epoch
+          return Math.abs(ageDate.getUTCFullYear() - 1970)
+        } else {
+          return '?'
+        }
       }
     }
   }
