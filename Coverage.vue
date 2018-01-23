@@ -31,7 +31,7 @@
             b &nbsp; &nbsp;
             Modal(id='cov-modal' type='search' :links="links" :options="search_modal" :picked="coverage")
           span(v-else)
-            b &nbsp; &nbsp; &nbsp loading... 
+            b &nbsp; &nbsp; &nbsp loading... [{{status}}]
       div.block-body
         div(v-if="coverage && coverage.length")
           DataGrid.block-grid(:data="coverage" :options="data_options" :links="links")
@@ -73,7 +73,7 @@
         },
         data_options: {
           title: 'Current Coverage',
-          fields: ['coverage', 'vaccine', 'status'],
+          fields: ['coverage', 'vaccine', 'expiry'],
           baseClass: 'coverage',
           fieldClass: 'status',
           addLinks: [
@@ -96,6 +96,9 @@
           closeButton: 'Done adding coverage',
           show: false,
           title: 'Original Title',
+          data_options: {
+            fields: ['coverage', 'vaccine', 'taken', 'expiry']
+          },
           search: {
             scope: 'disease',
             method: 'get',
@@ -108,11 +111,6 @@
             onPick: this.addCoverage,
             multiSelect: true,
             target: 'coverage'
-          },
-          data: {
-            title: 'Current Coverage',
-            fields: ['coverage', 'vaccine', 'status'],
-            addLinks: [{ type: 'button', name: 'More info', modal: { onPick: this.info, openButton: '?' } }]
           }
         },
         msg: 'Disease message',
@@ -144,13 +142,20 @@
         return this[name]
       },
       status: function () {
-        return this.$store.getters.getStatus
+        return this.$store.getters.getStatus('coverage')
         // return 'init'
       },
       coverage: function () {
         var C = this.$store.getters.getHash('coverage') || []
-        console.log('load Coverage: ' + JSON.stringify(C))
-        return C
+        var cov = []
+        console.log('loaded Full Coverage: ' + JSON.stringify(C))
+        for (var i = 0; i < C.length; i++) {
+          if (C[i].status && C[i].status.match(/covered|expiring/)) {
+            cov.push(C[i])
+          }
+        }
+        console.log('loaded coverage:' + JSON.stringify(cov))
+        return cov
       },
       title: function () {
         var t = 'Disease Coverage'
@@ -271,6 +276,23 @@
 </script>
 
 <style>
+  .coverage {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 40px;
+    border: 1px solid black;
+    padding: 10px;
+  }
+  .coverage.covered {
+    background-color: lightgreen;
+    /*display: none;*/
+  }
+
+  .coverage.expiring {
+    background-color: pink;
+    /*display: none;*/
+  }
   .disease-section {
 
   }
