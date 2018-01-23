@@ -12,7 +12,7 @@
           <!-- div.flexWrapper -->
           DataGrid.block-grid(:data="coverage" :options="coverage_options")
           p &nbsp;
-          DataGrid.block-grid(:data="coverage" :options="pending_options")
+          DataGrid.block-grid(:data="pending" :options="pending_options")
           p &nbsp;
           DataGrid.block-grid(:data="travel" :options="travel_options")
           p &nbsp;
@@ -23,7 +23,7 @@
             a(href='#' @click.prevent="show='covered'") Covered
             span &nbsp; &nbsp;
             <!-- a(href='#' @click.prevent="toggleVisibility('ScheduledBlock')") Scheduled -->
-            a(href='#' @click.prevent="show='scheduled'") Scheduled
+            a(href='#' @click.prevent="show='scheduled'") Pending
             span &nbsp; &nbsp;
             <!-- a(href='#' @click.prevent="toggleVisibility('TravelBlock')") Travel -->
             a(href='#' @click.prevent="show='travel'") Travel
@@ -62,8 +62,8 @@ import DataGrid from './../Standard/DataGrid.vue'
 import Modal from './../Standard/Modal.vue'
 import Messaging from './../Standard/Messaging.vue'
 
-import PrivateHeader from './../PrivateHeader.vue'
-import PublicFooter from './../PublicFooter.vue'
+import PrivateHeader from './PrivateHeader.vue'
+import PublicFooter from './PublicFooter.vue'
 
 import config from '@/config.js'
 
@@ -96,7 +96,7 @@ export default {
       demo: false,
       defaultBlock: 'coveredBlock',
       coverage_options: {
-        fields: ['coverage'],
+        fields: ['vaccine', 'coverage'],
         title: 'Covered',
         // fields: ['coverage', 'vaccine', 'status'],
         baseClass: 'coverage',
@@ -104,8 +104,8 @@ export default {
         addLinks: [ { type: 'icon', name: 'check-circle', colour: 'blue', modal: { onPick: this.info, openButton: '?' } } ]
       },
       pending_options: {
-        fields: ['coverage'],
-        title: 'Pending',
+        fields: ['vaccine', 'coverage'],
+        title: 'Required / Recommended',
         // fields: ['coverage', 'vaccine', 'status'],
         baseClass: 'scheduled',
         fieldClass: 'status',
@@ -119,18 +119,20 @@ export default {
         fieldClass: 'status',
         addLinks: [ { type: 'icon', name: 'check-circle', colour: 'blue', modal: { onPick: this.info, openButton: '?' } } ]
       },
+
       info_modal: {
         type: 'block',
         title: 'Details... ',
         header: 'Info header',
         body: 'info...',
         closeButton: 'Close info',
-        toggle: false
+        toggle: false,
+        data_options: {listBy: 'column'}
       },
       demoPatient: {
-        name: 'Brian Foster',
+        name: 'John Doe',
         id: 2,
-        birthdate: '1964-11-27',
+        birthdate: '1984-11-27',
         identifier: 'BCN123456',
         identifier_type: 'PHN'
       }
@@ -166,8 +168,11 @@ export default {
       map: {coverage: 'name'},
       fields: ['id', 'coverage', 'vaccine', 'taken', 'expiry', 'status']
     })
-
     console.log('load coverage...' + JSON.stringify(coverage))
+
+    // clear hash since temporarily loaded from config..
+    this.$store.commit('setHash', {key: 'coverage', value: []})
+    this.$store.commit('setHash', {key: 'travel', value: []})
 
     for (var i = 0; i < coverage.length; i++) {
       this.$store.commit('squeezeHash', {key: 'coverage', record: coverage[i]})
@@ -184,10 +189,12 @@ export default {
     console.log('patient: ' + JSON.stringify(patient))
 
     this.$store.getters.defaultBlock(this.defaultBlock)
+
+    this.$store.commit('setStatus', {coverage: 'loaded'})
   },
   computed: {
     status: function () {
-      return this.$store.getters.getStatus
+      return this.$store.getters.getStatus('coverage')
       // return 'init'
     },
     infoData: function () {
@@ -203,8 +210,26 @@ export default {
     },
     coverage: function () {
       var C = this.$store.getters.getHash('coverage') || []
-      console.log('load Coverage: ' + JSON.stringify(C))
-      return C
+      var cov = []
+      console.log('loaded Full Coverage: ' + JSON.stringify(C))
+      for (var i = 0; i < C.length; i++) {
+        if (C[i].status && C[i].status.match(/covered|expiring/)) {
+          cov.push(C[i])
+        }
+      }
+      console.log('loaded coverage:' + JSON.stringify(cov))
+      return cov
+    },
+    pending: function () {
+      var C = this.$store.getters.getHash('coverage') || []
+      var pending = []
+      for (var i = 0; i < C.length; i++) {
+        if (C[i].status && !C[i].status.match(/covered|expired/)) {
+          pending.push(C[i])
+        }
+      }
+      console.log('loaded coverage:' + JSON.stringify(pending))
+      return pending
     },
     travel: function () {
       var T = this.$store.getters.getHash('travel') || []
@@ -216,6 +241,13 @@ export default {
     info: function (record) {
       console.log('retrieve more coverage info from record: ' + JSON.stringify(record))
       var data = []
+
+      if (record.country) {
+        record.geography = '... geographical areas of concern within this region / subregion ...'
+        record.recommendations = 'general travel recommendations for travel to ' + record.country
+        record.importance = ' eg( optional, recommended or mandatory) ...'
+        record.details = '... more details regarding travel to ' + record.country
+      }
       data.push(record)
       this.$store.dispatch('setModalData', data)
       this.$store.getters.toggleModal('info-modal')
@@ -249,6 +281,11 @@ export default {
   background-color: #ccc;
 }
 .footer {
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+
   height: 70px;
   /*padding: 10px;*/
   background-color: #ccc;
