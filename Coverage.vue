@@ -26,7 +26,7 @@
     div.block
       div.block-header
         Demo(:demo="demo" name='disease')
-        h3 Patient Coverage
+        h3 Current Coverage
           span(v-if="status==='loaded'")
             b &nbsp; &nbsp;
             Modal(id='cov-modal' type='search' :links="links" :options="search_modal" :picked="coverage")
@@ -107,6 +107,7 @@
             title: 'Disease Coverage',
             field: 'name',
             search_fields: ['name', 'description'],
+            fields: ['coverage', 'vaccine', 'expiry', 'taken', 'status'],
             show_fields: ['coverage', 'vaccine', 'expiry', 'taken', 'status'],
             onPick: this.addCoverage,
             multiSelect: true,
@@ -154,7 +155,9 @@
             cov.push(C[i])
           }
         }
-        console.log('loaded coverage:' + JSON.stringify(cov))
+        console.log('modal Data in coverage: ' + JSON.stringify(this.$store.getters.modalData))
+
+        console.log('loaded Coverage:' + JSON.stringify(cov))
         return cov
       },
       title: function () {

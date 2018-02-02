@@ -4,9 +4,8 @@
     div.body.container
       Patient(:patient="demoPatient")
       Messaging
-      p &nbsp;
-      b {{coverage}}
       hr
+      Legend(:keys='legendKeys' baseClass='result-row result-cell')
       div.col-md-3.coverageBlock
           b Current Status:
           <!-- div.flexWrapper -->
@@ -20,16 +19,19 @@
         b
           span.mainSection
             <!-- a(href='#' @click.prevent="toggleVisibility('coveredBlock')") Covered -->
-            a(href='#' @click.prevent="show='covered'") Covered
+            a(href='#' @click.prevent="show='covered'") Diseases
             span &nbsp; &nbsp;
             <!-- a(href='#' @click.prevent="toggleVisibility('ScheduledBlock')") Scheduled -->
-            a(href='#' @click.prevent="show='scheduled'") Pending
+            a(href='#' @click.prevent="show='scheduled'") Vaccines
             span &nbsp; &nbsp;
             <!-- a(href='#' @click.prevent="toggleVisibility('TravelBlock')") Travel -->
             a(href='#' @click.prevent="show='travel'") Travel
             span &nbsp; &nbsp;
             <!-- a(href='#' @click.prevent="toggleVisibility('HistoryBlock')") History -->
             a(href='#' @click.prevent="show='history'") History
+            span &nbsp; &nbsp;
+
+            a(href='#' @click.prevent="show='upload'") Upload
             span &nbsp; &nbsp;
           Modal(id='info-modal' :options="info_modal" :content="infoContent" :data="infoData")
 
@@ -45,6 +47,10 @@
           div(v-if="show==='history'")
             div.mainSection#HistoryBlock
               History(:payload="payload")
+          div(v-if="show==='upload'")
+            div.mainSection#UploadBlock
+              Upload()
+
           <!-- Schedule(:payload="payload") -->
     PublicFooter.footer
 </template>
@@ -57,10 +63,13 @@ import Coverage from './Coverage'
 import Travel from './Travel'
 import History from './History.vue'
 
+import Upload from './../Standard/Upload.vue'
+
 import DataGrid from './../Standard/DataGrid.vue'
 
 import Modal from './../Standard/Modal.vue'
 import Messaging from './../Standard/Messaging.vue'
+import Legend from './../Standard/Legend.vue'
 
 import PrivateHeader from './PrivateHeader.vue'
 import PublicFooter from './PublicFooter.vue'
@@ -83,13 +92,16 @@ export default {
     Coverage,
     Travel,
     History,
+    Upload,
     Messaging,
+    Legend,
     Modal,
     PrivateHeader,
     PublicFooter
   },
   data () {
     return {
+      legendKeys: ['covered', 'expiring', 'expired', 'pending'],
       show: 'scheduled',
       menu: {options: ['dashboard', 'history', 'scheduled'], page: 'dashboard'},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
@@ -121,6 +133,7 @@ export default {
       },
 
       info_modal: {
+        key: 'info-modal',
         type: 'block',
         title: 'Details... ',
         header: 'Info header',
@@ -166,7 +179,7 @@ export default {
       key: 'coverage',
       defaults: {status: 'pending'},
       map: {coverage: 'name'},
-      fields: ['id', 'coverage', 'vaccine', 'taken', 'expiry', 'status']
+      fields: ['id', 'coverage', 'vaccine', 'taken', 'recommendationLevel', 'expiry', 'status']
     })
     console.log('load coverage...' + JSON.stringify(coverage))
 
@@ -209,6 +222,8 @@ export default {
       return payload
     },
     coverage: function () {
+      console.log('modal Data in vc: ' + JSON.stringify(this.$store.getters.getHash('info-modal')))
+
       var C = this.$store.getters.getHash('coverage') || []
       var cov = []
       console.log('loaded Full Coverage: ' + JSON.stringify(C))
@@ -217,10 +232,11 @@ export default {
           cov.push(C[i])
         }
       }
-      console.log('loaded coverage:' + JSON.stringify(cov))
+      console.log('loaded coverage for visit:' + JSON.stringify(cov))
       return cov
     },
     pending: function () {
+      console.log('modal Data in vp: ' + JSON.stringify(this.$store.getters.getHash('info-modal')))
       var C = this.$store.getters.getHash('coverage') || []
       var pending = []
       for (var i = 0; i < C.length; i++) {
@@ -228,7 +244,7 @@ export default {
           pending.push(C[i])
         }
       }
-      console.log('loaded coverage:' + JSON.stringify(pending))
+      console.log('loaded pending for visit:' + JSON.stringify(pending))
       return pending
     },
     travel: function () {
@@ -249,8 +265,10 @@ export default {
         record.details = '... more details regarding travel to ' + record.country
       }
       data.push(record)
-      this.$store.dispatch('setModalData', data)
+      // this.$store.dispatch('setModalData', data)
+      this.$store.commit('setHash', {key: 'info-modal', value: data})
       this.$store.getters.toggleModal('info-modal')
+      console.log('Visit info -> modal info' + JSON.stringify(this.$store.getters.getHash('info-modal')))
     },
     toggleVisibility: function (id) {
       this.$store.getters.toggleBlock(id)
@@ -275,6 +293,7 @@ export default {
 }
 .body {
   min-height: calc(100vh - 150px);
+  margin-bottom: 10px;
 }
 .header {
   height: 80px;
@@ -359,4 +378,31 @@ export default {
   .mainSection {
     transition: visibility 0s linear 0s, opacity 1000ms;
   }
+  .result-row.covered, .result-row .covered {
+    background-color: lightgreen;
+    /*display: none;*/
+  }
+  .result-row.due, .result-row .due {
+    background-color: yellow;
+  }
+  .result-row.expiring, .result-row .expiring {
+    background-color: orange;
+  }
+  .result-row.expired, .result-row .expired {
+    background-color: pink;
+  }
+  .result-row.recommended, .result-row .recommended {
+    background-color: yellow;
+  }
+  .result-row.pending, .result-row .pending {
+    background-color: yellow;
+  } 
+  .result-row.questions, .result-row .questions {
+    background-color: lightgreen;
+  }
+  .result-row.mandatory, .result-row .mandatory {
+    color: red !important;
+    font-weight: bold !important;
+  }
+
 </style>

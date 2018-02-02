@@ -1,8 +1,9 @@
 <template lang='pug'>
   div
     div.user-label(v-if="patient && patient.id")
-      span Patient:  &nbsp;
-      b.name {{ patient.name }} 
+      Modal(id='patient-modal' type='record' :options="patient_modal" :record="patient" openButton='OH')
+      span &nbsp; &nbsp; Patient:  &nbsp;
+      b.name {{ patient.name }}
       span &nbsp; &nbsp; &nbsp;
       span Birthdate:  &nbsp;
       b.birthdate {{ patient.birthdate }} &nbsp;
@@ -12,8 +13,8 @@
       b.identifier {{patient.identifier}} 
 
       div.navbar-right
-        button(@click.prevent="clearUser") New Patient
-        button(@click.prevent="test") Test
+        button.btn.btn-primary(@click.prevent="clearUser") New Patient
+        <!-- button.btn(@click.prevent="test") Test -->
         span &nbsp; &nbsp; &nbsp;
     div(v-if="!patient || !patient.id")
       Search(scope='patient', model='user' :url='userUrl', :search="search", prompt='Find Patient')
@@ -25,6 +26,7 @@
 
 <script>
   import Search from './../Standard/Search.vue'
+  import Modal from './../Standard/Modal.vue'
   import SearchResults from './../Standard/SearchResults.vue'
   import config from '@/config.js'
 
@@ -32,6 +34,7 @@
     name: 'patient',
     components: {
       Search,
+      Modal,
       SearchResults
     },
     data () {
@@ -41,7 +44,14 @@
         title: 'Patient Dashboard',
         menu: {options: ['user', 'search', 'history', 'scheduled'], selected: 'user'},
         search: { user: ['name', 'email'] },
-        userUrl: config.userUrl
+        userUrl: config.userUrl,
+        patient_modal: {
+          access_type: 'read',
+          table: 'patient',
+          toggle: true,
+          onSave: this.saveProfile,
+          openButton: '?'
+        }
       }
     },
     props: {
@@ -50,6 +60,9 @@
     methods: {
       clearUser () {
         this.$store.commit('clearUser')
+      },
+      saveProfile () {
+        console.log('save profile')
       }
     },
     computed: {

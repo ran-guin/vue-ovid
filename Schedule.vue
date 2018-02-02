@@ -3,18 +3,19 @@
     div.block
       div.block-header
         Demo(:demo="demo" name='vaccine')
-        h3 Vaccinations Required
+        h3 Pending Immunizations
           b &nbsp; &nbsp;
           Modal(id='schedule-modal' type='search' :options="search_modal" :picked="scheduled" :onDelete='deleteItem')
           Modal(id='immunize-modal' type='record' :options="immunize_options" :append="append")
           span &nbsp; &nbsp; 
-          div.navbar-right
+          hr
+          div
             div.input-group
               span.input-group-addon
                 icon(name='barcode')
-              input(type='text' placeholder='-- Scan Barcode --')
+              input.form-control(type='text' placeholder='-- Scan Barcode --')
               span.input-group-btn
-                button.btn.btn-primary(type='submit') Apply
+                button.btn.btn-primary(@click.prevent='scanBarcode') Apply
               span &nbsp; &nbsp; 
       div.block-body
         div(v-if="1")
@@ -60,7 +61,7 @@
         data_options: {
           title: 'Pending Immunizations',
           stored: 'coverage',
-          fields: ['vaccine', 'coverage', 'expiry'],
+          fields: ['vaccine', 'coverage', 'status'],
           baseClass: 'scheduled',
           fieldClass: 'status',
           addLinks: [
@@ -126,6 +127,16 @@
       }
     },
     methods: {
+      scanBarcode: function (record) {
+        console.log('scan barcode...')
+        record = { lot: 'lot number retrieved from barcode ...' }
+        this.$set(this.append, this.append.length, {name: 'lot', type: 'hidden', default: 'lot number retrieved from barcode ...'})
+        // this.$set(this.append, this.append.length, {name: 'vaccine', type: 'hidden', default: 'Rabies'})
+
+        record.vaccine = 'RaBies [eg...decoded from barcode]'
+        record.id = 5
+        this.immunizePatient(record)
+      },
       immunizePatient: function (record) {
         console.log('Immunize Me With ')
         console.log('retrieve more info from record: ' + JSON.stringify(record))
@@ -142,10 +153,22 @@
 
           this.$set(this.append, 0, {name: 'patient', type: 'hidden', default: patientId})
           this.$set(this.append, 1, {name: 'vaccinator', type: 'hidden', default: staffId})
-        }
 
-        console.log('MD: ' + JSON.stringify(this.$store.getters.ModalData))
-        this.$store.commit('appendModal', record)
+          this.$set(this.append, 1, {name: 'vaccine_id', type: 'hidden', default: record.id})
+          this.$store.commit('setHash', {key: 'modalTitle', value: 'Immunize with ' + record.vaccine + ' Vaccine'})
+
+          // this should replace use of this.append above...?? or vice versa ..
+          // this.$store.commit('setHash', {
+          //   key: 'form',
+          //   value: [
+          //     { name: 'patient', default: patientId, type: 'hidden' },
+          //     { name: 'vaccinator', default: staffId, type: 'hidden' },
+          //     { name: 'vaccine_id', default: record.vaccine, type: 'hidden' }
+          //   ]
+          // })
+          console.log('Immunize with ' + record.vaccine)
+        }
+        // this.$store.$set(this.form, key, val)
         // this.$store.dispatch('setModalData', data)
         this.$store.getters.toggleModal('immunize-modal')
       },
@@ -179,11 +202,9 @@
         data.contraindications = '... more details retrieved dynamically via CDC API ...'
         data.link = '... link to cdc site for more information'
 
-        // var data = [
-        //   {'vaccine': 'Hepatitis B', 'side_effects': 'Pain at the injection site (3%-29%) and a temperature greater than 37.7 C (1%-6%) have been among the most frequently reported side effects among adults and children receiving vaccine (8-12). In placebo-controlled studies, these side effects were reported no more frequently among vaccinees than among persons receiving a placebo (11,12). Among children receiving both hepatitis B vaccine and DTP, these mild side effects have been observed no more frequently than among children receiving only DTP.', 'adverse_effects': 'In the United States, surveillance of adverse reactions indicated a possible association between GBS and receipt of the first dose of plasma-derived hepatitis B vaccine (CDC, unpublished data; 13). However, an estimated 2.5 million adults received one or more doses of recombinant hepatitis B vaccine during 1986-1990, and available data concerning these vaccinees do not indicate an association between receipt of recombinant vaccine and GBS (CDC, unpublished data).\n\nBased on reports to the Vaccine Adverse Events Reporting System (VAERS), the estimated incidence rate of anaphylaxis among vaccine recipients is low (i.e., approximately one event per 600,000 vaccine doses distributed). Two of these adverse events occurred in children (CDC, unpublished data). In addition, only one case of anaphylaxis occurred among 100,763 children ages 10-11 years who had been vaccinated with recombinant vaccine in British Columbia (D. Scheifele, unpublished data), and no adverse events were reported among 166,757 children who had been vaccinated with plasma-derived vaccine in New Zealand (5). Although none of the persons who developed anaphylaxis died, this adverse event can be fatal; in addition, hepatitis B vaccine can -- in rare instances -- cause a life-threatening hypersensitivity reaction in some persons (5). Therefore, subsequent vaccination with hepatitis B vaccine is contraindicated for persons who have previously had an anaphylactic response to a dose of this vaccine.\n\nLarge-scale hepatitis B immunization programs for infants in Alaska, New Zealand, and Taiwan have not established an association between vaccination and the occurrence of other severe adverse events, including seizures and GBS (B. McMahon and A. Milne, unpublished data; 14). However, systematic surveillance for adverse reactions in these populations has been limited, and only a minimal number of children have received recombinant vaccine. Any presumed risk for adverse events that might be causally associated with hepatitis B vaccination must be balanced with the expected risk for hepatitis B virus (HBV)-related liver disease. Currently, an estimated 2,000-5,000 persons in each U.S. birth cohort will die as a result of HBV-related liver disease because of the 5% lifetime risk for HBV infection.\n\nAs hepatitis B vaccine is introduced for routine vaccination of infants, surveillance for vaccine-associated adverse events will continue to be an important part of the program despite the current record of safety. Any adverse event suspected to be associated with hepatitis B vaccination should be reported to VAERS. VAERS forms can be obtained by calling (800) 822-7967'}
-        // ]
+        // this.$store.dispatch('setModalData', data, {spin: true})
+        this.$store.commit('setHash', { key: 'info-modal', value: data })
 
-        this.$store.dispatch('setModalData', data, {spin: true})
         this.$store.getters.toggleModal('info-modal')
       }
     },
@@ -222,33 +243,5 @@
     margin-top: 40px;
     border: 1px solid black;
     padding: 10px;
-  }
-  .scheduled.covered {
-    background-color: lightgreen;
-    /*display: none;*/
-  }
-  .scheduled.due {
-    background-color: yellow;
-  }
-  .scheduled.expiring {
-    background-color: pink;
-  }
-  .scheduled.recommended {
-    background-color: yellow;
-  }
-  .scheduled.pending {
-    background-color: yellow;
-  } 
-  .scheduled.questions {
-    background-color: lightgreen;
-  }
-  .scheduled.mandatory {
-    background-color: yellow;
-    color: red !important;
-    font-weight: bold !important;
-  }
-  .scheduled.mandatory a {
-    color: red !important;
-    font-weight: bold !important;
   }
 </style>

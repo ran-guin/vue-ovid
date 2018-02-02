@@ -5,7 +5,7 @@
       h3 Immunization History
     div.block-body
       div(v-if="history && history.length")
-        DataGrid.block-grid(:data="history" :options="data_options")
+        DataGrid.block-grid(:data="history" :options="data_options" fieldClass='status')
       div(v-else)
         b No Immunization History
       div(v-if="help")
@@ -36,7 +36,11 @@ export default {
       search: {'vaccine': ['name']},
       selectOne: { subject: { id: 0, name: '', details: {} }, name: 'TBD', id: 0, label: {}, status: 'search' },
       helpList: ['View Immunization History', 'Printout Immunization History'],
-      data_options: {title: 'History', fields: ['vaccine', 'coverage', 'applied', 'expiry', 'reactionLevel', 'notes']},
+      data_options: {
+        title: 'History',
+        fields: ['vaccine', 'coverage', 'applied', 'expiry', 'reactionLevel', 'notes'],
+        fieldClass: 'status'
+      },
       footer: ''
     }
   },
@@ -66,9 +70,16 @@ export default {
   },
   computed: {
     history: function () {
-      var C = this.$store.getters.getHash('history') || []
-      console.log('load History: ' + JSON.stringify(C))
-      return C
+      var C = this.$store.getters.getHash('coverage') || []
+      var H = []
+      for (var i = 0; i < C.length; i++) {
+        if (C[i].status && C[i].status.match(/covered|expired|expiring/)) {
+          H.push(C[i])
+        }
+      }
+
+      console.log('load History: ' + JSON.stringify(H))
+      return H
     },
     help: function () {
       return '<p ><UL><LI>' + this.helpList.join('</LI><LI>') + '</LI></UL>'

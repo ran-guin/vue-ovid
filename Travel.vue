@@ -81,7 +81,7 @@
             field: 'country',
             show_fields: ['country', 'region'],
             search_fields: ['country', 'region', 'subregion'],
-            onPick: this.travel,
+            onPick: this.addTravel,
             multiSelect: true,
             target: 'travel'
           },
@@ -161,6 +161,19 @@
       },
       travel: function () {
         console.log('load travel data')
+
+        return this.$store.getters.getHash('travel')
+      },
+      addTravel: function () {
+        console.log('load travel data dynamically...')
+
+        var records = config.demo_travel_recommendations
+        for (var i = 0; i < records.length; i++) {
+          var record = records[i]
+          this.$store.commit('squeezeHash', {key: 'coverage', record: record})
+          console.log(JSON.stringify(record))
+        }
+
         return this.$store.getters.getHash('travel')
       },
 
