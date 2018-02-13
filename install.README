@@ -24,3 +24,14 @@
 
 > source .install
 
+** install adonis:
+
+yarn build --prod
+
+cd ..
+
+adonis new PROJNAME
+
+cp -R VUEPROJ/dist/* PROJNAME/public/
+
+ 
