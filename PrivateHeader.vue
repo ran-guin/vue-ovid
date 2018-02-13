@@ -1,8 +1,9 @@
 <template lang='pug'>
   div.info-header
     div.col-md-2.info-logo
-      a(href='/')
-        img(src='/static/images/needleIcon.png' height='40px')
+      <!-- a(href='/ovid') -->
+        router-link(:to="{name: 'About Ovid'}")
+          img(src='/static/images/needleIcon.png' height='40px')
     div.col-md-6.info-left
       b.input-lg OVID
       
@@ -14,11 +15,11 @@
       span.navbar-right
         Popup(icon='bars')
       span.navbar-right
-        b.input-lg Staff: 
+        b.input-lg User: 
           span(v-if="payload && payload.staff")
             b {{payload.staff.name}}
           span(v-else)
-            b TBD
+            b Demo Admin
 
         <!-- Demo(:demo="demo" name='staff') -->
         <!-- User(role='staff' :user="staff" title='staff' include='staff' :globalSearch="staffSearch" :search="addStaff") -->
