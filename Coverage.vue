@@ -29,9 +29,11 @@
         h3 Current Coverage
           span(v-if="status==='loaded'")
             b &nbsp; &nbsp;
-            Modal(id='cov-modal' type='search' :links="links" :options="search_modal" :picked="coverage")
+            Modal(id='cov-modal' type='search' :links='links' :options="search_modal" :picked="coverage")
+            span &nbsp; &nbsp; 
+            hr
           span(v-else)
-            b &nbsp; &nbsp; &nbsp loading... [{{status}}]
+            b &nbsp; &nbsp; &nbsp loading... [{{status}}] / [{{coverage}}]
       div.block-body
         div(v-if="coverage && coverage.length")
           DataGrid.block-grid(:data="coverage" :options="data_options" :links="links")
@@ -130,20 +132,20 @@
       },
       diseases: {
         type: Array
-      },
-      payload: {
-        type: Object
       }
     },
     created: function () {
       this.$store.commit('defineLinks', this.links)
     },
     computed: {
+      payload: function () {
+        return this.$store.getters.payload
+      },
       dlinks: function (name) {
         return this[name]
       },
       status: function () {
-        return this.$store.getters.getStatus('coverage')
+        return this.$store.getters.status('coverage')
         // return 'init'
       },
       coverage: function () {
