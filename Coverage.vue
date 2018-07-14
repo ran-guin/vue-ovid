@@ -197,7 +197,7 @@
         ]
 
         this.$store.dispatch('setModalData', data)
-        this.$store.getters.toggleModal('info-modal')
+        this.$store.dispatch('toggleModal', 'info-modal')
 
         // var url = 'http://localhost:1234/lookup/user'
         // var _this = this
