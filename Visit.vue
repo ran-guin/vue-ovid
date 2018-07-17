@@ -38,18 +38,20 @@
           div(v-if="show==='covered'")
             div.mainSection#coveredBlock
               Coverage(:payload="payload")
-          div(v-if="show==='scheduled'")
+          div(v-else-if="show==='scheduled'")
             div.mainSection#ScheduledBlock
               Schedule(:payload="payload" :cov="coverage")
-          div(v-if="show==='travel'")
+          div(v-else-if="show==='travel'")
             div.mainSection#TravelBlock
               Travel(:payload="payload")
-          div(v-if="show==='history'")
+          div(v-else-if="show==='history'")
             div.mainSection#HistoryBlock
               History(:payload="payload")
-          div(v-if="show==='upload'")
+          div(v-else-if="show==='upload'")
             div.mainSection#UploadBlock
               Upload()
+          div(v-else)
+            b no show
 
           <!-- Schedule(:payload="payload") -->
     PublicFooter.footer
@@ -164,24 +166,22 @@ export default {
   },
   created: function () {
     console.log('Initialize visit...')
+
+    // Demo Data ...
+    console.log('load demo data...' + JSON.stringify(coverage))
     var payload = config.demo_payload
     var coverage = config.demo_coverage
     var travel = config.demo_travel
 
     console.log('payload: ' + JSON.stringify(payload))
-    this.$store.commit('setHash', {key: 'payload', value: payload})
+    this.$store.dispatch('setHash', {key: 'payload', value: payload})
 
-    var showPayload = this.$store.getters.getHash('payload')
-    console.log('payload: ' + JSON.stringify(showPayload))
-
-    console.log('define hash...')
-    this.$store.commit('defineHash', {
+    this.$store.dispatch('setHash', {
       key: 'coverage',
+      fields: ['id', 'coverage', 'vaccine', 'taken', 'recommendationLevel', 'expiry', 'status'],
       defaults: {status: 'pending'},
-      map: {coverage: 'name'},
-      fields: ['id', 'coverage', 'vaccine', 'taken', 'recommendationLevel', 'expiry', 'status']
+      map: {coverage: 'name'}
     })
-    console.log('load coverage...' + JSON.stringify(coverage))
 
     // clear hash since temporarily loaded from config..
     this.$store.commit('setHash', {key: 'coverage', value: []})
@@ -201,13 +201,17 @@ export default {
     console.log('ok')
     console.log('patient: ' + JSON.stringify(patient))
 
-    this.$store.getters.defaultBlock(this.defaultBlock)
+    this.$store.dispatch('activate', this.defaultBlock)
 
-    this.$store.commit('setStatus', {coverage: 'loaded'})
+    this.$store.dispatch('status', {coverage: 'loaded'})
+
+    var st = this.$store.getters.status('all')
+    console.log('set status...')
+    console.log(JSON.stringify(st))
   },
   computed: {
     status: function () {
-      return this.$store.getters.getStatus('coverage')
+      return this.$store.getters.getHash('coverage')
       // return 'init'
     },
     infoData: function () {
@@ -219,6 +223,9 @@ export default {
     payload: function () {
       var payload = this.$store.state.payload
       console.log('retrieved ' + JSON.stringify(payload))
+
+      var p = this.$store.getters.payload
+      console.log('get payload (p2) : ' + JSON.stringify(p))
       return payload
     },
     coverage: function () {
