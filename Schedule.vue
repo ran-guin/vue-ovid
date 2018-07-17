@@ -170,7 +170,7 @@
         }
         // this.$store.$set(this.form, key, val)
         // this.$store.dispatch('setModalData', data)
-        this.$store.getters.toggleModal('immunize-modal')
+        this.$store.dispatch('toggleModal', 'immunize-modal')
       },
       saveImmunization: function (record) {
         console.log('save immunization record...')
