@@ -8,7 +8,7 @@
 
 > npm install
 
-> npm install -S vuex axios cors bootstrap bootstrap-vue vue-form-generator lodash
+> npm install -S vuex axios cors bootstrap bootstrap-vue vue-form-generator vue-diretive-tooltip lodash
 
 > npm install -D pug vue-awesome node-sass sass-loader
 
