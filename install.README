@@ -16,6 +16,8 @@
 
 > git clone https://github.com/ran-guin/vue-standard-components Standard
 
+*** Add custom package *** 
+
 > git clone https://github.com/ran-guin/vue-ovid ovid
 
 > cd ovid
@@ -24,9 +26,9 @@
 
 > source .install
 
-** install adonis:
+*** Install adonis:
 
-yarn build --prod
+yarn build --prod // generate dist/ directory with static files
 
 cd ..
 
