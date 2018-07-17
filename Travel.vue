@@ -133,7 +133,7 @@
         data.details = 'detailed info regarding travel to ' + target
 
         this.$store.dispatch('setModalData', data)
-        this.$store.getters.toggleModal('info-modal')
+        this.$store.dispatch('toggleModal', 'info-modal')
       },
       CoverMe: function (record) {
         console.log('add pending coverage records')
